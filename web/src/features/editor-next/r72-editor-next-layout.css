@@ -1,0 +1,239 @@
+.editor-next-page {
+  /* Host drawers sit above native timeline chrome (30), below native modals (400+). */
+  --lc-z-drawer: 40;
+  --editor-next-bg: var(--lc-chrome);
+  --editor-next-fg: var(--lc-text-primary);
+  --editor-next-loading: var(--lc-warning);
+  --editor-next-ready: var(--lc-success-text);
+  --editor-next-error: var(--lc-text-primary);
+}
+
+.editor-next-page > .editor-next-bar {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 44px;
+  height: 44px;
+  max-height: 44px;
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  scrollbar-width: thin;
+}
+
+.editor-next-bar > [data-state] { flex: 0 0 auto; }
+.editor-next-bar .editor-next-save { flex-wrap: nowrap; gap: 8px; }
+.editor-next-bar .editor-next-save > [data-save-state] { flex: 0 0 auto; }
+.editor-next-bar button,
+.editor-next-page > .editor-next-media-alert button {
+  appearance: none;
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--lc-text-primary);
+  background: var(--lc-control-surface-neutral);
+  border: var(--lc-border-width) solid var(--lc-text-faint);
+  border-radius: var(--lc-radius-control-lg);
+  box-shadow: none;
+  font: inherit;
+  cursor: pointer;
+}
+.editor-next-bar button { flex: 0 0 auto; padding: 0 10px; }
+.editor-next-bar button:hover:not(:disabled),
+.editor-next-page > .editor-next-media-alert button:hover:not(:disabled) {
+  background: var(--lc-surface-selected);
+  border-color: var(--lc-accent-line);
+}
+.editor-next-bar button:disabled,
+.editor-next-page > .editor-next-media-alert button:disabled {
+  color: var(--lc-text-secondary);
+  background: var(--lc-control-surface-neutral);
+  border-color: var(--lc-text-faint);
+  cursor: not-allowed;
+  opacity: 1;
+}
+.editor-next-bar button:focus-visible,
+.editor-next-bar [data-state]:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--lc-focus-ring);
+  outline-offset: calc(-1 * var(--lc-focus-ring-offset) - var(--ring-width, 2px));
+}
+.editor-next-bar button[aria-expanded="true"]:not(:disabled) {
+  color: var(--lc-text-primary);
+  background: var(--lc-surface-selected);
+  border-color: var(--lc-accent-line);
+}
+
+.editor-next-page > .editor-next-announcements {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.editor-next-page > .editor-next-drawer {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 44px 0 0 auto;
+  width: min(480px, 100vw);
+  height: calc(100dvh - 44px);
+  max-width: 100vw;
+  max-height: calc(100dvh - 44px);
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  --editor-next-bg: var(--lc-surface-sunken);
+  color: var(--editor-next-fg);
+  background: var(--editor-next-bg);
+  border: 1px solid var(--lc-text-muted);
+  border-radius: 0;
+  box-shadow: var(--lc-shadow-drawer);
+  z-index: var(--lc-z-drawer);
+  color-scheme: dark;
+  font-family: var(--lc-font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.editor-next-drawer .editor-next-drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.editor-next-drawer .editor-next-drawer-heading h2 { margin: 0; font-size: 16px; }
+.editor-next-drawer .editor-next-drawer-heading button {
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--editor-next-fg);
+  background: var(--lc-control-surface-neutral);
+  border: 1px solid var(--lc-text-muted);
+  border-radius: 4px;
+  font: inherit;
+  cursor: pointer;
+}
+.editor-next-drawer .editor-next-drawer-heading :focus-visible {
+  outline: var(--ring-width, 2px) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+
+.editor-next-bar .editor-next-draft-notice {
+  color: var(--lc-text-secondary);
+  font-size: var(--lc-text-sm);
+}
+.editor-next-page > .editor-next-media-alert {
+  position: static;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  max-height: 35dvh;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--lc-space-4);
+  box-sizing: border-box;
+  padding: var(--lc-space-4) var(--lc-space-5);
+  color: var(--lc-text-primary);
+  background: var(--lc-danger-surface);
+  border-bottom: var(--lc-border-width) solid var(--lc-text-muted);
+  font-size: var(--lc-text-lg);
+  line-height: var(--lc-leading-body);
+  overflow-wrap: anywhere;
+}
+.editor-next-page > .editor-next-media-alert p { margin: 0; flex: 1 1 280px; }
+.editor-next-page > .editor-next-media-alert button {
+  flex: 0 0 auto;
+  padding: var(--lc-space-4) var(--lc-space-5);
+}
+.editor-next-page > .editor-next-media-alert button:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+.editor-next-drawer .editor-next-technical { margin-top: var(--lc-space-6); }
+.editor-next-drawer .editor-next-technical summary {
+  min-height: 44px;
+  display: list-item;
+  align-content: center;
+  cursor: pointer;
+}
+.editor-next-drawer .editor-next-technical textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 6em;
+  resize: vertical;
+  color: var(--lc-text-primary);
+  background: var(--lc-surface-input);
+  border: var(--lc-border-width) solid var(--lc-text-muted);
+  font: var(--lc-text-md)/var(--lc-leading-body) var(--lc-font-mono);
+}
+.editor-next-drawer .editor-next-technical button {
+  min-height: 44px;
+  margin-top: var(--lc-space-4);
+  padding: var(--lc-space-4) var(--lc-space-5);
+  color: var(--editor-next-fg);
+  background: var(--editor-next-bg);
+  border: var(--lc-border-width) solid var(--lc-text-muted);
+  font: inherit;
+  cursor: pointer;
+}
+.editor-next-drawer .editor-next-technical :focus-visible {
+  outline: var(--ring-width, 2px) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+
+/* More specific than the historical export sheet, regardless of its mount order. */
+.editor-next-page .editor-next-export.editor-next-export {
+  color: var(--editor-next-fg);
+  background: var(--editor-next-bg);
+  border-color: var(--lc-text-muted);
+  box-shadow: var(--lc-shadow-drawer);
+}
+.editor-next-page .editor-next-export.editor-next-export::backdrop { background: var(--lc-chrome); }
+.editor-next-page .editor-next-export.editor-next-export .editor-next-export-eyebrow,
+.editor-next-page .editor-next-export.editor-next-export .editor-next-export-job { color: var(--lc-text-secondary); }
+.editor-next-page .editor-next-export.editor-next-export fieldset,
+.editor-next-page .editor-next-export.editor-next-export details { border-color: var(--lc-text-muted); }
+.editor-next-page .editor-next-export.editor-next-export button,
+.editor-next-page .editor-next-export.editor-next-export select,
+.editor-next-page .editor-next-export.editor-next-export a {
+  color: var(--lc-text-primary);
+  background: var(--lc-control-surface-neutral);
+  border-color: var(--lc-text-muted);
+}
+.editor-next-page .editor-next-export.editor-next-export button:disabled,
+.editor-next-page .editor-next-export.editor-next-export select:disabled {
+  color: var(--lc-text-secondary);
+  background: var(--lc-control-surface-neutral);
+}
+.editor-next-page .editor-next-export.editor-next-export option:disabled { color: var(--lc-text-secondary); }
+.editor-next-page .editor-next-export.editor-next-export .editor-next-export-primary {
+  color: var(--lc-chrome);
+  background: var(--lc-accent-line);
+  border-color: var(--lc-accent-line);
+}
+.editor-next-page .editor-next-export.editor-next-export .editor-next-export-primary:disabled {
+  color: var(--lc-text-secondary);
+  background: var(--lc-control-surface-neutral);
+  border-color: var(--lc-text-muted);
+}
+.editor-next-page .editor-next-export.editor-next-export .editor-next-export-warning { color: var(--lc-warning); }
+.editor-next-page .editor-next-export.editor-next-export .editor-next-export-error { color: var(--lc-text-primary); }
+.editor-next-page .editor-next-export.editor-next-export progress { accent-color: var(--lc-accent-line); }
+.editor-next-page .editor-next-export.editor-next-export :focus-visible {
+  outline: var(--ring-width, 2px) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+
+/* The native menubar has z-index:500 as a flex item. Contain it within topbar
+   chrome, not the entire engine: native modal-root must still outrank drawers. */
+.editor-next-page > .editor-next-engine[data-fc-viewport-mode="full"] #topbar {
+  position: relative;
+  z-index: 31;
+}

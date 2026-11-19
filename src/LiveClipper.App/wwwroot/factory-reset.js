@@ -1,0 +1,18 @@
+const resetSection=document.createElement('div');resetSection.className='settings-section factory-reset-section';resetSection.innerHTML='<h2>恢复出厂设置</h2><p class="input-hint">清除所有软件记录、剪辑方案、导入副本、下载素材和缓存，并恢复默认设置。外部导入的原始文件、软件数据目录之外的导出文件，以及已安装的工具与模型会保留。</p><button type="button" class="danger-button" id="factory-reset-open">重设所有设置与记录</button>';$('settings-form').after(resetSection);
+const resetDialog=document.createElement('dialog');resetDialog.className='factory-reset-dialog';resetDialog.innerHTML='<h2>恢复出厂设置</h2><p>此操作无法撤销。录制和后台任务会停止，以下软件数据将被清除：</p><div id="factory-reset-summary"></div><p class="input-hint">外部导入的原始文件、软件数据目录之外的导出文件、FFmpeg、Python 和 Ollama 模型会保留。</p><label class="inline-check"><input type="checkbox" id="factory-reset-confirm">我确认清除全部软件记录并恢复默认设置</label><p id="factory-reset-status" role="status"></p><div class="studio-actions"><button type="button" class="quiet" id="factory-reset-cancel">取消</button><button type="button" class="danger-button" id="factory-reset-run" disabled>清除并重设</button></div>';document.body.append(resetDialog);
+let factoryResetToken='',factoryResetRunning=false;
+const factoryResetChannel=typeof BroadcastChannel==='function'?new BroadcastChannel('liveclipper-factory-reset'):null;
+function factoryResetClearPage(){localStorage.clear();sessionStorage.clear();$('ai-key').value='';document.querySelectorAll('video,audio').forEach(x=>x.pause());}
+if(factoryResetChannel)factoryResetChannel.onmessage=e=>{if(e.data==='completed'){factoryResetClearPage();location.reload();}else if(e.data==='starting')document.querySelectorAll('video,audio').forEach(x=>x.pause());};
+$('factory-reset-open').onclick=async()=>{try{const result=await api('/settings/factory-reset');factoryResetToken=result.token;const s=result.summary;$('factory-reset-summary').innerHTML=`<ul><li>${s.sessions} 次录制 · ${s.clips} 个素材记录 · ${s.jobs} 个任务</li><li>${s.projects} 个剪辑方案 · ${s.assets} 个导入或下载素材</li><li>全部字幕、事件、弹幕、封面、AI 配置和生成缓存</li></ul><small class="muted">软件数据目录：${s.storageRoots.map(esc).join('；')}</small>`;$('factory-reset-confirm').checked=false;$('factory-reset-run').disabled=true;$('factory-reset-status').textContent='';resetDialog.showModal();}catch(e){toast(e.message)}};
+$('factory-reset-confirm').onchange=e=>{$('factory-reset-run').disabled=!e.target.checked;};
+$('factory-reset-cancel').onclick=()=>{if(!factoryResetRunning)resetDialog.close();};
+resetDialog.addEventListener('cancel',e=>{if(factoryResetRunning)e.preventDefault();});
+$('factory-reset-run').onclick=async()=>{
+  if(factoryResetRunning||!$('factory-reset-confirm').checked)return;
+  try{factoryResetRunning=true;$('factory-reset-run').disabled=true;$('factory-reset-cancel').disabled=true;$('factory-reset-confirm').disabled=true;$('factory-reset-status').textContent='正在停止任务、清除记录并恢复默认设置…';document.querySelectorAll('video,audio').forEach(x=>x.pause());
+    const result=await api('/settings/factory-reset','POST',{token:factoryResetToken,confirmation:'RESET'});factoryResetChannel?.postMessage('starting');factoryResetClearPage();
+    const until=Date.now()+90000;while(Date.now()<until){await new Promise(resolve=>setTimeout(resolve,1000));try{const response=await fetch('/api/health',{cache:'no-store'});if(response.ok){const health=await response.json();if(health.factoryResetId===result.operationId&&!health.resetting){factoryResetChannel?.postMessage('completed');location.reload();return;}}}catch{}}
+    throw new Error('重设服务未能重新启动，请重新打开软件。可查看数据目录中的 factory-reset-error.txt。');
+  }catch(e){factoryResetRunning=false;$('factory-reset-run').disabled=true;$('factory-reset-cancel').disabled=false;$('factory-reset-confirm').disabled=false;$('factory-reset-status').textContent=e.message;}
+};

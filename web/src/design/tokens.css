@@ -1,0 +1,125 @@
+/*
+ * LiveClipper Studio — App shell design tokens
+ *
+ * 与 design/ui/app-design-proposal.md §1 保持一致的应用外壳语义令牌。
+ *
+ * 作用域约定：
+ * - 本层不挂裸 `:root`：所有令牌都要求 <html data-theme="light"|"dark">，
+ *   因此未初始化主题时不产生任何全局副作用（不会与编辑器深色令牌抢颜色）。
+ * - 颜色/表面/color-scheme 只定义在两个主题选择器上；
+ *   与主题无关的尺寸令牌定义在 `:root[data-theme]` 上。
+ * - 编辑器画布（.editor-shell）保持深色：即使外壳切到浅色，
+ *   原生控件也不翻白（见文件末尾的边界规则）。
+ *
+ * 本文件只负责令牌（颜色/圆角/间距/动效/焦点环），不包含任何组件样式；
+ * 组件样式见 ./components/*.css，且只允许引用这里的令牌，不硬编码色值。
+ *
+ * 对比度基线（WCAG 2.x，实测见 web/src/design/A11Y.md）：
+ * - --text-3 小字 ≥4.5:1（浅 surface 5.36 / bg 4.78；深 surface 5.61 / bg 6.05）
+ * - --control-border 控件边框 ≥3:1（浅 3.97 / 深 3.41，surface 上）
+ * - --focus 焦点环实色 3:1+（浅 5.07 / 深 5.44）
+ */
+
+/* ── Dark ───────────────────────────────────────────────────── */
+/* 画布表面（[data-surface="canvas"]，编辑器/预览画布等）固定使用深色令牌：
+ * 即使外壳是浅色主题，画布区域内组件（Button/TextField/SelectField/SegmentedTabs 等）
+ * 也保持深色观感，原生控件通过 color-scheme: dark 保持深色。 */
+:root[data-theme="dark"],
+:root[data-theme] [data-surface="canvas"] {
+  color-scheme: dark;
+
+  --bg: #0b0b0c;
+  --bg-elevated: #101011;
+  --surface: #151516;
+  --surface-2: #1a1a1c;
+  --surface-3: #232324;
+  --surface-4: color-mix(in srgb, #232324 92%, #fff);
+  --surface-inverse: #f2f2ef;
+
+  --line: #242426;
+  --line-strong: #36363a;
+  --control-border: #6b6b67;
+
+  --text: #f1f1ee;
+  --text-2: #a5a5a0;
+  --text-3: #8f8f89;
+
+  --btn: #f2f2ef;
+  --btn-hover: #ffffff;
+  --btn-text: #111111;
+
+  --dot-green: #34c57a;
+  --dot-blue: #6b82ff;
+  --dot-purple: #a78bfa;
+  --dot-red: #ff6b6f;
+  --dot-amber: #f2b85c;
+
+  --ink-green: #34c57a;
+  --ink-blue: #8fa0ff;
+  --ink-purple: #a78bfa;
+  --ink-red: #ff6b6f;
+  --ink-amber: #f2b85c;
+
+  --pill: #232324;
+  --overlay: rgba(0, 0, 0, 0.62);
+  --focus: #6b82ff;
+  --shadow-card: none;
+  --shadow-float: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ── 与主题无关的令牌（仅在有主题作用域时生效） ─────────────── */
+:root[data-theme] {
+  /* 字体 */
+  --font-sans: Inter, "Segoe UI Variable Display", "Segoe UI", "PingFang SC",
+    "Microsoft YaHei UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, "SFMono-Regular", ui-monospace, monospace;
+
+  /* 字号（Display / H2 / Body / Meta / Mono） */
+  --fs-display: 30px;
+  --fs-h2: 19px;
+  --fs-body: 13.5px;
+  --fs-meta: 12px;
+  --fs-mono: 12px;
+
+  /* 圆角：小控件 / 按钮·输入·导航项 / 卡片·面板 / 胶囊 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  /* 间距：4 基数网格 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* 动效 */
+  --motion-fast: 150ms;
+  --motion-theme: 200ms;
+
+  /* 层叠令牌（与主题无关）：编辑器画布/浮层 < 900（.help-backdrop）< modal 1000 < toast 1100。
+   * 组件禁止硬编码全局 z-index；新增全局层先在这里定值并更新 design/A11Y.md。 */
+  --z-modal: 1000;
+  --z-toast: 1100;
+
+  /* 状态（与主题无关的数值令牌） */
+  --ring-width: 2px;
+  --ring-offset: 2px;
+  /* 焦点环颜色：语义别名 = 当前主题的 --focus；组件只允许用 --ring-* 组 */
+  --ring-color: var(--focus);
+  --disabled-opacity: 0.55;
+}
+
+/* ── 作用域边界：编辑器画布始终保持深色 ───────────────────────
+ * 编辑器（.editor-shell）沿用 design/ui/tokens.css 的 --lc-* 深色令牌，
+ * 其原生控件（滚动条 / 输入框 / 日期选择）也必须保持深色。
+ * 即使应用外壳把 <html data-theme="light">，画布区域也不跟随翻白。
+ * 本层不修改编辑器令牌值，只做这一条作用域隔离；P4 编辑器换壳时再按新壳调整。
+ */
+:root[data-theme] :where(.editor-shell) {
+  color-scheme: dark;
+}

@@ -1,0 +1,44 @@
+.editor-next-perception {
+  color-scheme: dark;
+  color: var(--editor-next-fg);
+  background: var(--editor-next-bg);
+  border-top: 1px solid var(--lc-line);
+  margin-top: 8px;
+  padding-top: 8px;
+  min-width: 0;
+}
+
+.editor-next-perception-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.editor-next-perception button {
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--editor-next-fg);
+  background: var(--lc-control-surface-neutral);
+  border: 1px solid var(--lc-text-muted);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editor-next-perception button:hover,
+.editor-next-perception button[aria-pressed="true"] { color: var(--editor-next-ready); }
+.editor-next-perception button:focus-visible { outline: var(--ring-width, 2px) solid currentColor; outline-offset: 2px; }
+.editor-next-perception [data-perception-state="loading"] > [role="status"] { color: var(--editor-next-loading); }
+.editor-next-perception [data-perception-state="ready"] > [role="status"] { color: var(--editor-next-ready); }
+.editor-next-perception [data-perception-state="error"] > [role="status"] { color: var(--editor-next-error); }
+.editor-next-perception-readout { padding-top: 4px; overflow-wrap: anywhere; }
+.editor-next-perception-figure { margin: 4px 0 0; min-width: 0; }
+.editor-next-perception-scale { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); font-variant-numeric: tabular-nums; }
+.editor-next-perception-scale > :nth-child(2) { text-align: center; }
+.editor-next-perception-scale > :last-child { text-align: right; }
+.editor-next-perception-plot { position: relative; height: 44px; overflow: hidden; border-block: 1px solid currentColor; pointer-events: none; }
+.editor-next-perception-cut { position: absolute; inset-block: 0; border-left: 2px solid var(--editor-next-loading); }
+.editor-next-perception-silence { position: absolute; inset-block: 0; border: 1px dashed var(--editor-next-fg); }
+.editor-next-perception-envelope { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--editor-next-ready); stroke-width: 2; }

@@ -1,0 +1,15 @@
+/* HelpDialog 视口限高 + 层叠修复（task-103，T-10 / T-07）
+ * 基础样式在 styles/app.css；task-103 写范围是 features/editor，故以覆盖方式放在这里，
+ * 由 EditorPage 加载（晚于 app.css），不改全局样式文件。
+ * 层叠契约：编辑器内固定面板 250 / 顶栏菜单 500 < help 900 < --z-modal 1000 < --z-toast 1100。
+ * 限高原因：快捷键清单 31 行时高度 ~1475px，700–1000px 视口下会裁掉底部行与 footer。
+ */
+.help-backdrop {
+  z-index: 900;
+}
+
+.help-dialog {
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}

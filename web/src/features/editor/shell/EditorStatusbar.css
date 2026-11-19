@@ -1,0 +1,174 @@
+/*
+ * 编辑器外壳状态栏（P0）——28px 单行，深色令牌，不随全局主题。
+ */
+
+.ed-statusbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-6);
+  box-sizing: border-box;
+  height: 28px;
+  padding: 0 var(--lc-space-5);
+  overflow: hidden;
+  border-top: var(--lc-border-width) solid var(--line-strong, var(--lc-line-strong));
+  background: var(--surface, var(--lc-chrome));
+  color: var(--text-3, var(--lc-text-muted));
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-xs);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ed-statusbar__group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ed-statusbar__group--left {
+  flex: none;
+}
+
+.ed-statusbar__group--center {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+.ed-statusbar__group--right {
+  flex: 0 1 auto;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.ed-statusbar__brand {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lc-space-3);
+  color: var(--text-2, var(--lc-text-secondary));
+  font-size: var(--lc-text-2xs);
+  font-weight: var(--lc-weight-semibold);
+  letter-spacing: 0.06em;
+}
+
+.ed-statusbar__mark {
+  width: 14px;
+  height: 14px;
+  background: url('/favicon.svg') center / contain no-repeat;
+}
+
+.ed-statusbar__item {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-3, var(--lc-text-muted));
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.ed-statusbar__item--project {
+  max-width: 180px;
+  color: var(--text-2, var(--lc-text-secondary));
+}
+
+/* 连接态 */
+.ed-statusbar__conn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-3, var(--lc-text-muted));
+}
+
+.ed-statusbar__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-3, var(--lc-text-faint));
+}
+
+.ed-statusbar__conn--ok .ed-statusbar__dot {
+  background: var(--dot-green, var(--lc-success));
+}
+
+.ed-statusbar__conn--warn .ed-statusbar__dot {
+  background: var(--dot-amber, var(--lc-warning));
+}
+
+.ed-statusbar__conn--error .ed-statusbar__dot {
+  background: var(--dot-red, var(--lc-danger));
+}
+
+/* 保存态 */
+.ed-statusbar__save {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  padding-left: 10px;
+  border-left: var(--lc-border-width) solid var(--line, var(--lc-line-soft));
+  color: var(--text-3, var(--lc-text-muted));
+}
+
+.ed-statusbar__save-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dot-green, var(--lc-success));
+}
+
+.ed-statusbar__save--dirty .ed-statusbar__save-dot,
+.ed-statusbar__save--draft .ed-statusbar__save-dot {
+  background: var(--dot-amber, var(--lc-warning));
+}
+
+.ed-statusbar__save--idle .ed-statusbar__save-dot {
+  background: var(--text-3, var(--lc-text-faint));
+}
+
+.ed-statusbar__save--saving .ed-statusbar__save-dot {
+  background: var(--dot-blue, var(--lc-accent));
+}
+
+.ed-statusbar__save--conflict .ed-statusbar__save-dot,
+.ed-statusbar__save--error .ed-statusbar__save-dot {
+  background: var(--dot-red, var(--lc-danger));
+}
+
+.ed-statusbar__message {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-2, var(--lc-text-secondary));
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1440px) {
+  .ed-statusbar__group--center {
+    gap: var(--lc-space-4);
+  }
+
+  .ed-statusbar__group--right .ed-statusbar__item:first-of-type {
+    display: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .ed-statusbar__group--center .ed-statusbar__item:nth-last-child(2) {
+    display: none;
+  }
+
+  .ed-statusbar__item--project {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 960px) {
+  .ed-statusbar__group--center {
+    display: none;
+  }
+
+  .ed-statusbar__message {
+    display: none;
+  }
+}

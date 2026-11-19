@@ -1,0 +1,135 @@
+.fc-replica {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  background: #0b0d12;
+}
+
+.fc-replica__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-5);
+  height: 40px;
+  padding: 0 10px 0 14px;
+  border-bottom: var(--lc-border-width) solid rgba(255, 255, 255, 0.12);
+  background: #11151d;
+  color: #e8edf6;
+  font-size: 12.5px;
+}
+
+.fc-replica__title {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.fc-replica__hint {
+  color: #8f9bb0;
+  font-size: 11.5px;
+}
+
+.fc-replica__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 260px;
+  overflow: hidden;
+  color: #b9c7de;
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fc-replica__error {
+  min-width: 0;
+  max-width: 320px;
+  overflow: hidden;
+  color: #ff9b9b;
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fc-replica__unsupported {
+  min-width: 0;
+  max-width: 260px;
+  overflow: hidden;
+  padding: var(--lc-space-1) 7px;
+  border: var(--lc-border-width) solid rgba(242, 184, 75, 0.35);
+  border-radius: var(--lc-radius-round);
+  background: rgba(242, 184, 75, 0.1);
+  color: #f2c26b;
+  font-size: var(--lc-text-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fc-replica__spin {
+  animation: fc-replica-spin 0.9s linear infinite;
+}
+
+@keyframes fc-replica-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fc-replica__export-note {
+  min-width: 0;
+  max-width: 340px;
+  overflow: hidden;
+  padding: var(--lc-space-1) 7px;
+  border: var(--lc-border-width) solid rgba(89, 209, 154, 0.35);
+  border-radius: var(--lc-radius-round);
+  background: rgba(89, 209, 154, 0.1);
+  color: #8be0b7;
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fc-replica__export {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  margin-left: auto;
+  padding: 5px 10px;
+  border: var(--lc-border-width) solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e8edf6;
+  font-size: var(--lc-text-sm);
+  cursor: pointer;
+}
+
+.fc-replica__export:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.fc-replica__close {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  margin-left: 0;
+  height: 28px;
+  padding: 0 10px;
+  border: var(--lc-border-width) solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e8edf6;
+  font-size: var(--lc-text-sm);
+  cursor: pointer;
+}
+
+.fc-replica__close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.fc-replica__frame {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: #0b0d12;
+}

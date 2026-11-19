@@ -1,0 +1,87 @@
+/* R51-EP2 · 保存冲突 / 草稿恢复 / 未保存提示条。只用 design/ui/tokens.css 的令牌，不写裸色值。 */
+
+.save-status-bars {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  gap: var(--lc-space-1);
+  padding: var(--lc-space-1) var(--lc-space-4);
+  background: var(--lc-bg-root);
+}
+
+.save-status-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  min-height: var(--lc-space-7);
+  padding: var(--lc-space-1) var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--lc-border);
+  border-radius: var(--lc-radius-sm);
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-xs);
+  color: var(--lc-text);
+  background: var(--lc-surface-raised);
+}
+
+.save-status-bar--conflict {
+  border-color: var(--lc-danger);
+  background: var(--lc-danger-surface);
+}
+
+.save-status-bar--draft {
+  border-color: var(--lc-warning);
+  background: var(--lc-warning-surface);
+}
+
+.save-status-bar--unsaved {
+  align-self: flex-end;
+  color: var(--lc-text-muted);
+}
+
+.save-status-bar__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.save-status-bar__warn {
+  margin-left: var(--lc-space-3);
+  color: var(--lc-warning-text);
+}
+
+.save-status-bar__actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: var(--lc-space-3);
+}
+
+.save-status-bar__button {
+  padding: var(--lc-space-1) var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--lc-border-strong);
+  border-radius: var(--lc-radius-control);
+  font: inherit;
+  color: var(--lc-text);
+  background: var(--lc-surface);
+  cursor: pointer;
+}
+
+.save-status-bar__button:hover:not(:disabled) {
+  background: var(--lc-surface-hover);
+}
+
+.save-status-bar__button:disabled {
+  color: var(--lc-text-disabled);
+  cursor: default;
+}
+
+.save-status-bar__button--primary {
+  border-color: var(--lc-accent-line);
+  color: var(--lc-accent-text);
+  background: var(--lc-accent-soft);
+}
+
+.save-status-bar__dot {
+  width: var(--lc-space-3);
+  height: var(--lc-space-3);
+  border-radius: var(--lc-radius-round);
+  background: var(--lc-warning);
+}

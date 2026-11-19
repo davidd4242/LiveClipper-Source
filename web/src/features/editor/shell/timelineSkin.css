@@ -1,0 +1,1824 @@
+/*
+ * P1a 时间线视觉换肤（保持深色画布）。
+ *
+ * 约定：
+ * - 只做视觉：不新增/删除任何交互逻辑；Timeline.tsx 仅调整 className / 包裹层 / 派生只读变量。
+ * - 作用域：全部规则挂在 `.editor-shell` 下，避免影响 app.css 里的其他页面。
+ * - 画布永远深色：颜色取自 design tokens 的深色值，但固定为 --tl-* 局部变量，
+ *   不随 `<html data-theme>` 变化；外壳（顶栏/状态栏）仍跟随主题。
+ * - 冲突策略：app.css 里旧的时间线规则保留（回退用），本文件靠更高特异性覆盖；
+ *   P1a 不改 app.css 时间线段落，避免与 a-impl 的 body 规则行号冲突。
+ */
+
+.editor-shell {
+  --tl-surface: #101012;
+  --tl-surface-2: #17171a;
+  --tl-surface-3: #1f1f23;
+  --tl-head: #141417;
+  --tl-line: #242428;
+  --tl-line-strong: #34343b;
+  --tl-text: #ececea;
+  --tl-text-2: #a8a8a3;
+  /* 由 #77776f 提亮到设计层 dark --text-3：head 标签/状态栏原 4.07:1 不达标。 */
+  --tl-text-3: #8f8f89;
+  --tl-accent: #6b82ff;
+  --tl-accent-strong: #8fa1ff;
+  --tl-accent-soft: rgba(107, 130, 255, 0.16);
+  --tl-warning: #f2b85c;
+  --tl-warning-soft: rgba(242, 184, 92, 0.16);
+  --tl-success: #34c57a;
+  --tl-danger: #ff6b6f;
+  --tl-playhead: #7ec2ff;
+  --tl-radius-clip: 6px;
+  --tl-radius-control: 6px;
+  --tl-track-video: 56px;
+  --tl-track-audio: 48px;
+  --tl-scrollbar: rgba(122, 122, 132, 0.45);
+  /* 轨道头加宽以容纳「图标 + 名称 + 三键」；ruler-head / track-heads 共用该令牌。 */
+  --lc-timeline-head-width: 168px;
+}
+
+/* ---------- 面板外壳 ---------- */
+
+.editor-shell .timeline-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--tl-surface);
+  border-color: var(--tl-line-strong);
+  color: var(--tl-text);
+  font-family: var(--lc-font-ui);
+}
+
+.editor-shell .timeline-panel .timeline-head {
+  height: 32px;
+  flex: 0 0 32px;
+  gap: var(--lc-space-1);
+  padding: 0 var(--lc-space-4);
+  background: var(--tl-head);
+  border-bottom: var(--lc-border-width) solid var(--tl-line-strong);
+}
+
+.editor-shell .timeline-head .panel-tab {
+  /* P1.7u（U6）：FC 时间线页签 26px（S3：host tab24 vs FC26）。 */
+  height: 26px;
+  padding: 0 10px;
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--tl-radius-control);
+  color: var(--tl-text-3);
+  font-size: var(--lc-text-xs);
+  letter-spacing: 0.01em;
+}
+
+.editor-shell .timeline-head .panel-tab:hover {
+  color: var(--tl-text);
+  /* P1.7u（U6）：去裸 rgba，改由时间线文字色派生，浅色作用域不翻成黑灰。 */
+  background: color-mix(in srgb, var(--tl-text) 4%, transparent);
+}
+
+.editor-shell .timeline-head .panel-tab.is-active {
+  color: var(--tl-text);
+  background: var(--tl-surface-3);
+  border-color: var(--tl-line-strong);
+}
+
+.editor-shell .timeline-head .sequence-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  height: 22px;
+  padding: 0 var(--lc-space-4);
+  margin-left: var(--lc-space-3);
+  border: var(--lc-border-width) solid var(--tl-line);
+  border-radius: var(--tl-radius-control);
+  background: var(--tl-surface-2);
+  color: var(--tl-text-2);
+  font-size: 10.5px;
+}
+
+.editor-shell .timeline-head .sequence-number {
+  color: var(--tl-text);
+  font-family: var(--lc-font-mono);
+  font-size: var(--lc-text-2xs);
+}
+
+.editor-shell .timeline-head-spacer {
+  flex: 1;
+}
+
+/* ---------- 48px 工具条（左：工具组 / 右：吸附 + 缩放 + 时间码） ---------- */
+
+.editor-shell .timeline-toolbar {
+  height: 48px;
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 var(--lc-space-4);
+  background: var(--tl-head);
+  border-bottom: var(--lc-border-width) solid var(--tl-line-strong);
+  flex-wrap: nowrap;
+  /* 溢出由 TimelineToolbar 按实际宽度决定（ResizeObserver）：放不下的动作进「更多」菜单，
+     这里不再滚动、不再渐隐、不再按序号隐藏。 */
+  overflow: hidden;
+}
+
+.editor-shell .timeline-toolbar > * {
+  flex: 0 0 auto;
+}
+
+.editor-shell .timeline-toolbar-main {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.editor-shell .timeline-toolbar-slot {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+}
+
+.editor-shell .timeline-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.editor-shell .timeline-toolbar-right > * {
+  flex: 0 0 auto;
+}
+
+.editor-shell .timeline-toolbar.is-stacked {
+  height: auto;
+  min-height: 78px;
+  flex-basis: auto;
+  flex-wrap: wrap;
+  align-content: center;
+  row-gap: var(--lc-space-2);
+  padding-top: var(--lc-space-3);
+  padding-bottom: var(--lc-space-3);
+}
+
+.editor-shell .timeline-toolbar.is-stacked .timeline-toolbar-main {
+  flex-basis: 100%;
+}
+
+.editor-shell .timeline-toolbar.is-stacked .timeline-toolbar-spacer {
+  display: none;
+}
+
+.editor-shell .timeline-toolbar.is-stacked .timeline-toolbar-right {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: auto;
+}
+
+/* 图标模式：每个动作固定 30px 宽；文字与快捷键角标只在标签模式显示（名称保留在 aria-label / title / 更多菜单）。 */
+.editor-shell .timeline-toolbar.is-icons .pr-tool > span,
+.editor-shell .timeline-toolbar.is-icons .timeline-tool-divider {
+  display: none;
+}
+
+.editor-shell .timeline-toolbar.is-icons .timeline-toolbar-action,
+.editor-shell .timeline-toolbar.is-icons .timeline-snap,
+.editor-shell .timeline-toolbar .pr-tool.timeline-toolbar-more {
+  width: 30px;
+  min-width: 30px;
+  flex: 0 0 30px;
+  padding: 0;
+  justify-content: center;
+}
+
+.editor-shell .timeline-toolbar.is-icons .timeline-zoom > span {
+  display: none;
+}
+
+.editor-shell .timeline-toolbar.is-icons .timeline-zoom input[type='range'] {
+  width: 56px;
+}
+
+.editor-shell .timeline-toolbar .pr-tool {
+  height: 30px;
+  gap: 5px;
+  padding: 0 var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--tl-line);
+  border-radius: var(--tl-radius-control);
+  background: var(--tl-surface-2);
+  color: var(--tl-text-2);
+  font-size: var(--lc-text-xs);
+  transition: background 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out;
+}
+
+.editor-shell .timeline-toolbar .pr-tool:hover:not(:disabled) {
+  color: var(--tl-text);
+  background: var(--tl-surface-3);
+  border-color: var(--tl-line-strong);
+}
+
+.editor-shell .timeline-toolbar .pr-tool.is-active {
+  color: var(--tl-text);
+  background: var(--tl-accent-soft);
+  border-color: var(--tl-accent);
+}
+
+.editor-shell .timeline-toolbar .pr-tool.is-idle {
+  color: var(--tl-text-2);
+}
+
+.editor-shell .timeline-toolbar .pr-tool:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.editor-shell .timeline-toolbar .pr-tool--compact {
+  padding: 0 9px;
+}
+
+.editor-shell .timeline-toolbar .pr-tool-caret,
+.editor-shell .timeline-toolbar .pr-tool-key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border: var(--lc-border-width) solid var(--tl-line-strong);
+  border-radius: var(--lc-radius-control);
+  color: var(--tl-text-3);
+  font-family: var(--lc-font-mono);
+  font-size: 9px;
+  line-height: 1;
+}
+
+.editor-shell .timeline-toolbar .pr-tool.is-active .pr-tool-key,
+.editor-shell .timeline-toolbar .pr-tool.is-active .pr-tool-caret {
+  color: var(--tl-accent-strong);
+  border-color: var(--tl-accent);
+}
+
+.editor-shell .timeline-toolbar .timeline-tool-divider {
+  width: 1px;
+  height: 20px;
+  margin: 0 3px;
+  background: var(--tl-line-strong);
+}
+
+.editor-shell .timeline-toolbar > .timeline-toolbar-spacer {
+  flex: 1 1 0;
+  min-width: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.editor-shell .timeline-toolbar .timeline-zoom {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  height: 30px;
+  padding: 0 var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--tl-line);
+  border-radius: var(--tl-radius-control);
+  background: var(--tl-surface-2);
+  color: var(--tl-text-3);
+}
+
+.editor-shell .timeline-toolbar .timeline-zoom input[type='range'] {
+  width: 72px;
+  height: 4px;
+  accent-color: var(--tl-accent);
+}
+
+.editor-shell .timeline-toolbar .timeline-zoom span {
+  min-width: 32px;
+  color: var(--tl-text-2);
+  font-family: var(--lc-font-mono);
+  font-size: var(--lc-text-2xs);
+  text-align: right;
+}
+
+.editor-shell .timeline-toolbar .timeline-timecode {
+  min-width: 96px;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  border: var(--lc-border-width) solid var(--tl-line);
+  border-radius: var(--tl-radius-control);
+  background: var(--tl-surface-2);
+  color: var(--tl-text-2);
+  font-family: var(--lc-font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* FilmCraft：时间码可点击进入编辑（HH:MM:SS:FF），编辑时不接受全局快捷键。 */
+.editor-shell .timeline-toolbar button.timeline-timecode {
+  font: inherit;
+  font-family: var(--lc-font-mono);
+  font-size: 10.5px;
+  cursor: text;
+  transition: border-color 0.12s ease-out, background 0.12s ease-out, color 0.12s ease-out;
+}
+.editor-shell .timeline-toolbar button.timeline-timecode:hover {
+  border-color: var(--tl-accent);
+  color: var(--tl-text);
+}
+.editor-shell .timeline-toolbar .timeline-timecode.is-editing {
+  width: 96px;
+  text-align: center;
+  border-color: var(--tl-accent);
+  background: var(--tl-surface-3, var(--tl-surface-2));
+  color: var(--tl-text);
+  outline: none;
+}
+.editor-shell .timeline-toolbar .timeline-timecode.is-editing:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tl-accent) 45%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .timeline-toolbar button.timeline-timecode {
+    transition: none;
+  }
+}
+
+/* ---------- 28px 标尺 ---------- */
+
+.editor-shell .timeline-body {
+  background: var(--tl-surface);
+}
+
+.editor-shell .ruler-row {
+  height: 28px;
+  flex: 0 0 28px;
+  border-bottom: var(--lc-border-width) solid var(--tl-line-strong);
+}
+
+.editor-shell .ruler-head {
+  background: var(--tl-head);
+  border-right: var(--lc-border-width) solid var(--tl-line-strong);
+}
+
+.editor-shell .ruler {
+  background: var(--tl-head);
+  color: var(--tl-text-3);
+  font-size: 9px;
+}
+
+.editor-shell .ruler-tick {
+  background: var(--tl-line);
+}
+
+.editor-shell .ruler-tick.is-major {
+  background: var(--tl-line-strong);
+}
+
+.editor-shell .ruler-tick span {
+  top: 7px;
+  left: 4px;
+  color: var(--tl-text-3);
+  font-size: 9px;
+  letter-spacing: 0.02em;
+}
+
+.editor-shell .ruler-tick.is-major span {
+  color: var(--tl-text-2);
+}
+
+.editor-shell .ruler-scroll {
+  scrollbar-width: none;
+}
+
+/* ---------- 底部独立横向滚动条（P1c：不再压在 A3 轨上） ---------- */
+
+/* hidden 属性的 display:none 会被作者样式 display:flex 覆盖，这里显式兜底。 */
+.editor-shell .timeline-hscroll[hidden] {
+  display: none;
+}
+
+.editor-shell .timeline-hscroll {
+  position: relative;
+  flex: 0 0 12px;
+  margin-left: var(--lc-timeline-head-width);
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--tl-head);
+  border-top: var(--lc-border-width) solid var(--tl-line-strong);
+  scrollbar-width: none;
+}
+
+.editor-shell .timeline-hscroll::-webkit-scrollbar {
+  display: none;
+}
+
+.editor-shell .timeline-hscroll__track {
+  position: sticky;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.editor-shell .timeline-hscroll__thumb {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  height: 6px;
+  min-width: 28px;
+  border-radius: var(--lc-radius-round);
+  background: var(--tl-scrollbar);
+  opacity: 0.7;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+.editor-shell .timeline-hscroll:hover .timeline-hscroll__thumb {
+  opacity: 0.9;
+}
+
+/* 自绘滑块时隐藏原生滚动内容占位 */
+.editor-shell .timeline-hscroll__content {
+  height: 1px;
+}
+
+/* 原生横向滚动条不显示，但仍允许滚轮/触控板横向滚动 */
+.editor-shell .ruler-scroll::-webkit-scrollbar,
+.editor-shell .tracks-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.editor-shell .tracks-scroll {
+  scrollbar-width: none;
+}
+
+/* ---------- 轨道头 ---------- */
+
+.editor-shell .track-area {
+  overflow-x: hidden;
+  overflow-y: auto;
+  align-items: flex-start;
+  scrollbar-width: thin;
+  scrollbar-color: var(--tl-scrollbar) transparent;
+}
+
+.editor-shell .track-heads {
+  background: var(--tl-head);
+  border-right: var(--lc-border-width) solid var(--tl-line-strong);
+}
+
+.editor-shell .track-head {
+  height: var(--tl-track-video);
+  gap: var(--lc-space-2);
+  padding: 0 7px;
+  border-bottom: var(--lc-border-width) solid var(--tl-line);
+  color: var(--tl-text-2);
+  position: relative;
+}
+
+.editor-shell .track-head[data-kind='audio'] {
+  height: var(--tl-track-audio);
+}
+
+.editor-shell .track-head.is-targeted {
+  background: var(--tl-surface-2);
+}
+
+.editor-shell .track-head.is-targeted::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--tl-accent);
+}
+
+.editor-shell .track-id {
+  min-width: 18px;
+  color: var(--tl-text-2);
+  font-size: var(--lc-text-2xs);
+  font-weight: var(--lc-weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+.editor-shell .track-head.is-targeted .track-id {
+  color: var(--tl-accent-strong);
+}
+
+.editor-shell .track-kind {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--tl-text-3);
+}
+
+.editor-shell .track-name {
+  color: var(--tl-text-2);
+  font-size: 10.5px;
+}
+
+.editor-shell .track-head .track-toggle {
+  /* 命中盒 24×24（axe target-size），视觉仍是 18×18：边框/底色画在 glyph 上。 */
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--tl-text-3);
+  font-size: 9px;
+  transition: color 120ms ease-out;
+}
+
+.editor-shell .track-head .track-toggle-glyph {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: var(--lc-border-width) solid var(--tl-line);
+  border-radius: var(--lc-radius-control-lg);
+  background: var(--tl-surface-2);
+  transition: border-color 120ms ease-out, background 120ms ease-out;
+}
+
+.editor-shell .track-head .track-toggle:hover:not(:disabled) {
+  color: var(--tl-text);
+}
+
+.editor-shell .track-head .track-toggle:hover:not(:disabled) .track-toggle-glyph {
+  border-color: var(--tl-line-strong);
+}
+
+.editor-shell .track-head .track-toggle.is-active,
+.editor-shell .track-head .track-toggle.is-locked {
+  color: var(--tl-warning);
+}
+
+.editor-shell .track-head .track-toggle.is-active .track-toggle-glyph,
+.editor-shell .track-head .track-toggle.is-locked .track-toggle-glyph {
+  border-color: var(--tl-warning);
+  background: var(--tl-warning-soft);
+}
+
+.editor-shell .track-head .track-toggle.is-solo {
+  color: var(--tl-success);
+}
+
+.editor-shell .track-head .track-toggle.is-solo .track-toggle-glyph {
+  border-color: var(--tl-success);
+  background: rgba(52, 197, 122, 0.14);
+}
+
+/* ---------- 轨道与片段 ---------- */
+
+.editor-shell .tracks-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--tl-scrollbar) transparent;
+}
+
+.editor-shell .tracks-scroll::-webkit-scrollbar,
+.editor-shell .track-area::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.editor-shell .tracks-scroll::-webkit-scrollbar-thumb,
+.editor-shell .track-area::-webkit-scrollbar-thumb {
+  border-radius: var(--lc-radius-round);
+  background: var(--tl-scrollbar);
+}
+
+.editor-shell .tracks-scroll::-webkit-scrollbar-track,
+.editor-shell .track-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor-shell .tracks {
+  background: var(--tl-surface);
+}
+
+.editor-shell .track {
+  height: var(--tl-track-video);
+  border-bottom: var(--lc-border-width) solid var(--tl-line);
+  background: color-mix(in srgb, var(--tl-text) 1.2%, transparent);
+}
+
+.editor-shell .track.track-a1,
+.editor-shell .track.track-a2,
+.editor-shell .track.track-a3 {
+  height: var(--tl-track-audio);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.editor-shell .track.is-targeted {
+  background: rgba(107, 130, 255, 0.06);
+}
+
+.editor-shell .track.is-muted,
+.editor-shell .track.is-hidden {
+  opacity: 0.5;
+}
+
+.editor-shell .track.is-locked .timeline-clip {
+  cursor: default;
+}
+
+.editor-shell .timeline-gap {
+  border-radius: var(--lc-radius-control);
+  background: color-mix(in srgb, var(--tl-text) 3%, transparent);
+  color: var(--tl-text-3);
+  font-size: 9px;
+  /* gap 可点选：Delete 直接闭合（FilmCraft 式空隙操作）。 */
+  pointer-events: auto;
+  cursor: pointer;
+  transition: background 120ms ease-out, border-color 120ms ease-out;
+}
+
+.editor-shell .timeline-gap:hover {
+  background: color-mix(in srgb, var(--tl-text) 7%, transparent);
+}
+
+.editor-shell .timeline-gap.is-gap-selected {
+  border-color: var(--tl-accent-strong, #d8d8d2);
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--tl-text) 10%, transparent) 0 3px, transparent 3px 8px),
+    color-mix(in srgb, var(--tl-text) 6%, transparent);
+  outline: 1px solid var(--tl-accent-strong, #d8d8d2);
+  outline-offset: calc(-1 * var(--lc-focus-offset));
+  color: var(--tl-text-2);
+}
+
+.editor-shell .timeline-clip {
+  top: 6px;
+  bottom: 6px;
+  border: var(--lc-border-width) solid var(--tl-line-strong);
+  border-radius: var(--tl-radius-clip);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--tl-text) 6%, transparent);
+  overflow: hidden;
+  transition: filter 120ms ease-out, border-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.editor-shell .timeline-clip:hover {
+  filter: brightness(1.14);
+  border-color: color-mix(in srgb, var(--tl-text) 30%, transparent);
+}
+
+.editor-shell .timeline-clip.is-selected {
+  border-color: var(--tl-accent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--tl-text) 8%, transparent),
+    0 0 0 1px var(--tl-accent),
+    0 0 14px rgba(107, 130, 255, 0.28);
+}
+
+.editor-shell .timeline-clip.is-disabled {
+  opacity: 0.42;
+}
+
+.editor-shell .timeline-clip.clip-video-a {
+  border-color: var(--tl-skin-clip-video-a-border);
+  background: var(--tl-skin-clip-video-a-fill);
+}
+
+.editor-shell .timeline-clip.clip-video-b {
+  border-color: var(--tl-skin-clip-video-b-border);
+  background: var(--tl-skin-clip-video-b-fill);
+}
+
+.editor-shell .timeline-clip.clip-video-c {
+  border-color: var(--tl-skin-clip-video-c-border);
+  background: var(--tl-skin-clip-video-c-fill);
+}
+
+.editor-shell .timeline-clip.clip-audio {
+  border-color: var(--tl-skin-clip-audio-border);
+  background: var(--tl-skin-clip-audio-fill);
+}
+
+.editor-shell .clip-label {
+  top: 6px;
+  left: 8px;
+  right: 8px;
+  color: #f4f4f2;
+  font-size: var(--lc-text-sm);
+  font-weight: var(--lc-weight-semibold);
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.editor-shell .clip-timecode {
+  position: absolute;
+  right: 8px;
+  bottom: 5px;
+  color: color-mix(in srgb, var(--tl-text) 72%, transparent);
+  font-family: var(--lc-font-mono);
+  font-size: var(--lc-text-2xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.editor-shell .timeline-clip.is-nested .clip-timecode,
+.editor-shell .timeline-clip .clip-nested-badge + .clip-timecode {
+  display: none;
+}
+
+.editor-shell .timeline-clip .trim-handle {
+  top: 50%;
+  transform: translateY(-50%);
+  height: 22px;
+  border-radius: var(--lc-radius-control);
+  background: color-mix(in srgb, var(--tl-text) 16%, transparent);
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.editor-shell .timeline-clip:hover .trim-handle,
+.editor-shell .timeline-clip.is-selected .trim-handle {
+  opacity: 1;
+}
+
+.editor-shell .timeline-clip .trim-handle:hover {
+  background: var(--tl-accent);
+}
+
+.editor-shell .timeline-clip .clip-waveform {
+  opacity: 0.7;
+}
+
+.editor-shell .timeline-clip .clip-link {
+  top: 6px;
+  right: 6px;
+  color: color-mix(in srgb, var(--tl-text) 80%, transparent);
+}
+
+/* ---------- 转场 / 关键帧 / 包络 / 标记 / 吸附 / 播放头 ---------- */
+
+.editor-shell .timeline-transition {
+  top: 12px;
+  bottom: 12px;
+  border: var(--lc-border-width) solid rgba(143, 161, 255, 0.5);
+  border-radius: var(--lc-radius-control-lg);
+  background:
+    repeating-linear-gradient(45deg, rgba(143, 161, 255, 0.22) 0 4px, transparent 4px 6px),
+    var(--tl-surface-3);
+  color: rgba(236, 236, 234, 0.86);
+  font-size: 9px;
+}
+
+.editor-shell .timeline-transition:hover {
+  border-color: var(--tl-accent-strong);
+}
+
+.editor-shell .timeline-transition.is-selected {
+  border-color: var(--tl-accent);
+  box-shadow:
+    inset 0 0 0 1px var(--tl-accent),
+    0 0 10px rgba(107, 130, 255, 0.35);
+}
+
+.editor-shell .timeline-keyframe-mark {
+  border-radius: var(--lc-radius-xs);
+  background: var(--tl-warning);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+
+.editor-shell .timeline-keyframe-mark:hover {
+  background: #ffd08a;
+}
+
+.editor-shell .timeline-keyframe-mark.is-selected {
+  background: var(--tl-accent-strong);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 0 8px rgba(107, 130, 255, 0.5);
+}
+
+.editor-shell .timeline-envelope polyline {
+  stroke: var(--tl-warning);
+  stroke-width: 1.5;
+  opacity: 0.9;
+}
+
+.editor-shell .timeline-envelope-editor .envelope-point {
+  width: 9px;
+  height: 9px;
+  border: var(--lc-border-width) solid var(--tl-surface);
+  background: var(--tl-warning);
+  box-shadow: 0 0 0 1px rgba(242, 184, 92, 0.55);
+}
+
+.editor-shell .timeline-envelope-editor .envelope-point:hover,
+.editor-shell .timeline-envelope-editor .envelope-point.is-dragging {
+  background: #ffd08a;
+  box-shadow: 0 0 0 3px rgba(242, 184, 92, 0.25);
+}
+
+.editor-shell .timeline-envelope-editor .envelope-line-hit:hover {
+  stroke: rgba(242, 184, 92, 0.25);
+}
+
+.editor-shell .timeline-marker {
+  width: 8px;
+  height: 8px;
+  background: var(--tl-warning);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.editor-shell .timeline-snap-guide {
+  width: 1px;
+  background: var(--tl-warning);
+  box-shadow: 0 0 6px rgba(242, 184, 92, 0.55);
+}
+
+.editor-shell .timeline-snap-guide::before {
+  background: var(--tl-warning);
+}
+
+/* 播放头时间码标签：随标尺滚动，mono 小标签贴住播放头。 */
+/* FilmCraft：In/Out 工作区（标尺内半透明高亮带 + 入/出标记）。 */
+.editor-shell .timeline-work-range {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--tl-playhead, #ffffff) 9%, transparent);
+  border-left: var(--lc-border-width) solid color-mix(in srgb, var(--tl-playhead, #ffffff) 55%, transparent);
+  border-right: var(--lc-border-width) solid color-mix(in srgb, var(--tl-playhead, #ffffff) 55%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.editor-shell .timeline-inout-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  pointer-events: none;
+  z-index: 6;
+  background: color-mix(in srgb, var(--tl-playhead, #ffffff) 78%, transparent);
+}
+.editor-shell .timeline-inout-mark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-top: 6px solid var(--tl-playhead, #ffffff);
+}
+.editor-shell .timeline-inout-mark.is-in::before {
+  right: 0;
+  border-left: 6px solid transparent;
+}
+.editor-shell .timeline-inout-mark.is-out::before {
+  left: 0;
+  border-right: 6px solid transparent;
+}
+
+.editor-shell .timeline-playhead-tag {
+  position: absolute;
+  top: 2px;
+  z-index: 7;
+  transform: translateX(-50%);
+  padding: 1px 5px;
+  border-radius: var(--lc-radius-control-lg);
+  background: var(--tl-playhead);
+  color: #0a0c10;
+  font-family: var(--tl-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 9.5px;
+  font-weight: var(--lc-weight-semibold);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.editor-shell .timeline-playhead {
+  width: 1px;
+  background: var(--tl-playhead);
+  box-shadow: 0 0 6px rgba(126, 194, 255, 0.45);
+}
+
+.editor-shell .playhead-grab::before,
+.editor-shell .playhead-cap {
+  background: var(--tl-playhead);
+}
+
+.editor-shell .playhead-cap {
+  top: 0;
+  left: -4px;
+  width: 9px;
+  height: 6px;
+}
+
+/* 框选矩形：现有实现暂无框选交互，这里先定义统一视觉，
+   后续新增框选时直接复用（不改变当前交互）。 */
+.editor-shell .timeline-marquee {
+  position: absolute;
+  z-index: 8;
+  border: var(--lc-border-width) solid var(--tl-accent);
+  border-radius: var(--lc-radius-control);
+  background: rgba(107, 130, 255, 0.12);
+  pointer-events: none;
+}
+
+.editor-shell .timeline-clip.is-marquee-selected {
+  border-color: var(--tl-accent-strong);
+  box-shadow:
+    0 0 0 1px var(--tl-accent-strong),
+    0 0 18px rgba(90, 140, 255, 0.35);
+}
+
+/* ---------- 底部状态条 ---------- */
+
+.editor-shell .timeline-status {
+  display: flex;
+  flex: 0 0 26px;
+  align-items: center;
+  gap: 9px;
+  height: 26px;
+  min-height: 26px;
+  padding: 0 10px;
+  border-top: var(--lc-border-width) solid var(--tl-line-strong);
+  background: var(--tl-head);
+  color: var(--tl-text-3);
+  font-size: 9.5px;
+  line-height: 1;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.editor-shell .timeline-tool-chip {
+  flex-shrink: 0;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editor-shell .timeline-status-right {
+  margin-left: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--tl-text-3);
+}
+
+.editor-shell .timeline-status strong,
+.editor-shell .timeline-status b {
+  color: var(--tl-text-2);
+  font-weight: var(--lc-weight-medium);
+}
+
+.editor-shell .timeline-status strong,
+.editor-shell .timeline-status b {
+  color: var(--tl-text-2);
+  font-weight: var(--lc-weight-medium);
+}
+
+/* ---------- 响应式与动效收束 ---------- */
+
+/* 状态栏右侧在窄视口隐藏；工具条的适配完全由 TimelineToolbar 按实际宽度决定。 */
+@media (max-width: 1450px) {
+  .editor-shell .timeline-status-right {
+    display: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .editor-shell .timeline-status {
+    gap: var(--lc-space-3);
+    font-size: 9px;
+    padding: 0 var(--lc-space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .timeline-clip,
+  .editor-shell .track-head .track-toggle,
+  .editor-shell .timeline-toolbar .pr-tool,
+  .editor-shell .timeline-clip .trim-handle {
+    transition: none;
+  }
+}
+
+
+/* ==========================================================================
+   P1e：时间线细节统一到 --tl-* 深色令牌
+   （播放头/吸附线/转场/关键帧/包络/标记/片段徽标/轨道头图标）
+   ========================================================================== */
+
+/* 播放头：线、顶部标签（cap）、拖动手柄同色。 */
+.editor-shell .timeline-playhead {
+  background: var(--tl-playhead);
+  box-shadow: 0 0 6px rgba(126, 194, 255, 0.28);
+}
+
+.editor-shell .playhead-cap,
+.editor-shell .playhead-grab::before {
+  background: var(--tl-playhead);
+}
+
+.editor-shell .playhead-grab:hover::before,
+.editor-shell .playhead-grab:focus-visible::before {
+  box-shadow: 0 0 0 3px rgba(126, 194, 255, 0.24);
+}
+
+/* 吸附参考线。 */
+.editor-shell .timeline-snap-guide {
+  background: var(--tl-accent);
+  box-shadow: 0 0 0 1px rgba(107, 130, 255, 0.18);
+}
+
+/* 转场块：深色底 + 斜纹，hover 提亮，选中用 accent。 */
+.editor-shell .timeline-transition {
+  color: var(--tl-text-2);
+  border: var(--lc-border-width) solid var(--tl-line-strong);
+  border-radius: var(--lc-radius-control);
+  background:
+    repeating-linear-gradient(45deg, rgba(143, 161, 255, 0.1) 0 4px, transparent 4px 6px),
+    var(--tl-surface-2);
+}
+
+.editor-shell .timeline-transition:hover {
+  color: var(--tl-text);
+  border-color: var(--tl-accent);
+}
+
+.editor-shell .timeline-transition.is-selected {
+  /* P1.7u（U6）：底色是 --tl-surface-2 非 accent，按 U-D9 不用纯白；强调交给边框与辉光。 */
+  color: var(--tl-text);
+  border-color: var(--tl-accent);
+  box-shadow: inset 0 0 0 1px var(--tl-accent), 0 0 8px rgba(107, 130, 255, 0.3);
+}
+
+.editor-shell .timeline-transition-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.02em;
+}
+
+/* 关键帧菱形：默认描边，选中填充 accent，拖动 warning。 */
+.editor-shell .timeline-keyframe-mark {
+  border: var(--lc-border-width) solid var(--tl-line-strong);
+  border-radius: var(--lc-radius-hair);
+  background: var(--tl-surface);
+}
+
+.editor-shell .timeline-keyframe-mark:hover {
+  border-color: var(--tl-accent);
+  background: var(--tl-accent-soft);
+}
+
+.editor-shell .timeline-keyframe-mark.is-selected {
+  border-color: var(--tl-accent-strong);
+  background: var(--tl-accent-strong);
+}
+
+.editor-shell .timeline-keyframe-mark.is-dragging {
+  border-color: var(--tl-warning);
+  background: var(--tl-warning);
+  box-shadow: 0 0 6px rgba(242, 184, 92, 0.5);
+}
+
+/* 音量包络：线用 accent-strong，点用 accent，悬停淡光。 */
+.editor-shell .timeline-envelope polyline {
+  stroke: var(--tl-accent-strong);
+  opacity: 0.9;
+}
+
+.editor-shell .timeline-envelope-editor .envelope-line-hit:hover {
+  stroke: rgba(143, 161, 255, 0.25);
+}
+
+.editor-shell .timeline-envelope-editor .envelope-point {
+  border: var(--lc-border-width) solid var(--tl-text);
+  background: var(--tl-accent-strong);
+  box-shadow: 0 0 0 2px rgba(12, 12, 14, 0.6);
+}
+
+.editor-shell .timeline-envelope-editor .envelope-point:hover {
+  box-shadow: 0 0 0 4px rgba(107, 130, 255, 0.26);
+}
+
+.editor-shell .timeline-envelope-editor .envelope-point.is-dragging {
+  box-shadow: 0 0 0 5px rgba(107, 130, 255, 0.32);
+}
+
+/* 标记旗。 */
+.editor-shell .timeline-marker {
+  color: var(--tl-warning);
+}
+
+/* 片段上的链接/嵌套徽标与选中描边。 */
+.editor-shell .clip-link {
+  color: var(--tl-accent-strong);
+}
+
+.editor-shell .clip-nested-badge {
+  color: var(--tl-accent-strong);
+  background: var(--tl-accent-soft);
+  border-radius: var(--lc-radius-xs);
+}
+
+.editor-shell .timeline-clip.is-nested {
+  box-shadow: inset 0 0 0 1px var(--tl-accent);
+}
+
+/* 轨道头图标、静音/独奏/锁定状态。 */
+.editor-shell .track-kind {
+  color: var(--tl-text-3);
+}
+
+.editor-shell .track-head.is-targeted .track-kind {
+  color: var(--tl-accent-strong);
+}
+
+.editor-shell .track-toggle.is-active {
+  color: #ff9a9d;
+  background: rgba(255, 107, 111, 0.18);
+  border-color: rgba(255, 107, 111, 0.45);
+}
+
+.editor-shell .track-toggle.is-solo.is-active {
+  color: #7ee2ac;
+  background: rgba(52, 197, 122, 0.18);
+  border-color: rgba(52, 197, 122, 0.45);
+}
+
+/* task-144：框选（marquee）状态在工具栏的 inline 反馈 */
+.editor-shell .timeline-marquee-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-2);
+  height: 24px;
+  padding: 0 var(--lc-space-4);
+  border-radius: 6px;
+  background: rgba(107, 130, 255, 0.14);
+  color: var(--tl-accent-strong, #8fa1ff);
+  font-size: var(--lc-text-xs);
+  white-space: nowrap;
+}
+
+.editor-shell .timeline-marquee-hint kbd {
+  padding: 0 3px;
+  border: var(--lc-border-width) solid rgba(143, 161, 255, 0.32);
+  border-radius: var(--lc-radius-control);
+  background: rgba(107, 130, 255, 0.12);
+  color: var(--tl-text, #ececea);
+  font-size: var(--lc-text-2xs);
+  line-height: 14px;
+}
+
+@media (max-width: 1240px) {
+  .editor-shell .timeline-marquee-hint {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   task-7 · FilmCraft 0.13.0 时间线静态视觉规格与微反馈
+   依据：tmp/research/filmcraft-animation-inventory.md
+         §3.4（片段着色 / 选中 / 禁用 / fx）、A10（吸附线）、A12（marquee）、
+         A19/A20（trim 括号）、A25（目标轨按钮）、§3.7（光标映射）
+   原则：
+   - 只覆盖 hover / 状态切换；过渡统一 0.12s ease-out（ANIMATION_TIME），
+     不做逐帧 tween；所有选择器限定在 .editor-shell 作用域内。
+   - 源码常量：trim 括号 = 3px 竖线 + 6px 臂、内缩 2px，悬停 / 选中 50% 透明；
+     活动边缘 #e53e3e、对侧 #f2c43d。吸附三角 = 8px 宽 × 5px 高纯白填充，
+     Stroke::NONE（源码没有 1.5px 描边，故此处不描边）。marquee = 白 7% 填充 /
+     55% 边框。片段选中亮度 +6%，禁用每通道 /2（同色相变暗）。
+   - 本段末尾的「待补钩子」小节对应现有 DOM 缺失的元素，待 Lead 补 class /
+     data 属性后自动生效；当前不改变源码、不产生悬空样式副作用。
+   ========================================================================== */
+
+/* ---------- 1. 吸附参考线（A10） ---------- */
+
+.editor-shell .timeline-snap-guide {
+  width: 1px;
+  background: #fafafa;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+  transform: translateX(-0.5px);
+  pointer-events: none;
+  transition: opacity 0.12s ease-out;
+}
+
+/* 顶端 / 底端各一个 8 × 5 白色三角，尖端朝内（源码 d=+1 / -1）。 */
+.editor-shell .timeline-snap-guide::before,
+.editor-shell .timeline-snap-guide::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  display: block;
+  width: 8px;
+  height: 5px;
+  margin-left: -4px;
+  background: #ffffff;
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.editor-shell .timeline-snap-guide::before {
+  top: 0;
+  transform: none;
+}
+
+.editor-shell .timeline-snap-guide::after {
+  bottom: 0;
+  transform: rotate(180deg);
+}
+
+/* 标尺变体：同一条 1px 白线贯穿整行标尺。
+   两个三角统一由内容区主 guide 绘制：源码画在 ruler.max.y / content.max.y，
+   而 .ruler 是 overflow:hidden，标尺内的三角会被裁切。 */
+.editor-shell .timeline-snap-guide.timeline-snap-guide--ruler {
+  top: 0;
+  bottom: 0;
+  height: auto;
+  box-shadow: none;
+}
+
+.editor-shell .timeline-snap-guide.timeline-snap-guide--ruler::before,
+.editor-shell .timeline-snap-guide.timeline-snap-guide--ruler::after {
+  display: none;
+}
+
+/* ---------- 2. trim 括号（A19 / A20） ---------- */
+
+/* 手柄本体退成透明命中盒（9px 宽），视觉移到 ::before / ::after。 */
+.editor-shell .timeline-clip .trim-handle {
+  top: 0;
+  bottom: 0;
+  width: 9px;
+  height: auto;
+  transform: none;
+  border-radius: 0;
+  background: transparent;
+  opacity: 0;
+  cursor: ew-resize;
+  transition: opacity 0.12s ease-out;
+  --tl-bracket: rgba(242, 196, 61, 0.5); /* 默认（Roll / 普通）= 黄 50% */
+}
+
+.editor-shell .timeline-clip .trim-handle::before,
+.editor-shell .timeline-clip .trim-handle::after {
+  content: '';
+  position: absolute;
+  top: 2px; /* 源码 row.min.y + 2 */
+  bottom: 2px; /* 源码 row.max.y - 2 */
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+
+/* 3px 竖线，距边缘 1.5px 居中（源码 xi = x + dir * 1.5）。 */
+.editor-shell .timeline-clip .trim-handle::before {
+  width: 3px;
+  background: var(--tl-bracket);
+}
+
+/* 6px 臂：上下各 3px 粗，与竖线相接（源码 Stroke::new(3.0)）。 */
+.editor-shell .timeline-clip .trim-handle::after {
+  width: 6px;
+  box-sizing: border-box;
+  border-top: 3px solid var(--tl-bracket);
+  border-bottom: 3px solid var(--tl-bracket);
+}
+
+.editor-shell .timeline-clip .trim-handle.trim-start::before {
+  left: 0;
+}
+
+.editor-shell .timeline-clip .trim-handle.trim-start::after {
+  left: 1.5px;
+}
+
+.editor-shell .timeline-clip .trim-handle.trim-end::before {
+  right: 0;
+}
+
+.editor-shell .timeline-clip .trim-handle.trim-end::after {
+  right: 1.5px;
+}
+
+/* hover / 选中 / 键盘聚焦时显示括号。 */
+.editor-shell .timeline-clip:hover .trim-handle,
+.editor-shell .timeline-clip.is-selected .trim-handle,
+.editor-shell .timeline-clip:focus-visible .trim-handle {
+  opacity: 1;
+}
+
+/* 活动边缘（指针所在侧）：红 #e53e3e 实色；对侧保持黄 50%。 */
+.editor-shell .timeline-clip .trim-handle:hover,
+.editor-shell .timeline-clip .trim-handle:active,
+.editor-shell .timeline-clip .trim-handle.is-active {
+  --tl-bracket: #e53e3e;
+  background: transparent;
+}
+
+/* 涟漪工具：两侧边缘都进入活动色（源码 Ripple = 红）。 */
+.editor-shell .timeline-panel.is-tool-ripple .timeline-clip .trim-handle {
+  --tl-bracket: rgba(229, 62, 62, 0.5);
+}
+
+.editor-shell .timeline-panel.is-tool-ripple .timeline-clip .trim-handle:hover,
+.editor-shell .timeline-panel.is-tool-ripple .timeline-clip .trim-handle:active {
+  --tl-bracket: #e53e3e;
+}
+
+/* ---------- 3. 框选矩形（A12） ---------- */
+
+.editor-shell .timeline-marquee {
+  border: var(--lc-border-width) solid color-mix(in srgb, var(--tl-text) 55%, transparent);
+  border-radius: var(--lc-radius-control);
+  background: color-mix(in srgb, var(--tl-text) 7%, transparent);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.28);
+}
+
+/* ---------- 4. 光标映射（§3.7） ---------- */
+
+/* 片段 body：grab；拖动中 grabbing；只读 / 禁用保持 default。 */
+.editor-shell .timeline-clip {
+  cursor: grab;
+}
+
+.editor-shell .timeline-clip.is-dragging,
+.editor-shell .timeline-clip:active {
+  cursor: grabbing;
+}
+
+.editor-shell .timeline-clip.is-readonly,
+.editor-shell .timeline-clip.is-disabled {
+  cursor: default;
+}
+
+/* 修剪边缘（任意工具）：ew-resize —— 已在手柄规则中声明，这里兜住工具态覆盖。 */
+.editor-shell .timeline-clip .trim-handle {
+  cursor: ew-resize;
+}
+
+/* Razor：悬停片段与边缘都是 crosshair。 */
+.editor-shell .timeline-panel.is-tool-razor .timeline-clip,
+.editor-shell .timeline-panel.is-tool-razor .timeline-clip .trim-handle {
+  cursor: crosshair;
+}
+
+/* Hand 工具（FilmCraft Grab）：拖动平移时间线视图。 */
+.editor-shell .timeline-panel.is-tool-hand .timeline-clip,
+.editor-shell .timeline-panel.is-tool-hand .timeline-clip .trim-handle,
+.editor-shell .timeline-panel.is-tool-hand .tracks,
+.editor-shell .timeline-panel.is-tool-hand .ruler {
+  cursor: grabbing;
+}
+
+/* Pen 工具（FilmCraft Pen）：十字，点击片段加点。 */
+.editor-shell .timeline-panel.is-tool-pen .timeline-clip,
+.editor-shell .timeline-panel.is-tool-pen .timeline-clip .trim-handle {
+  cursor: crosshair;
+}
+
+/* Zoom 工具（FilmCraft Zoom）：放大镜，Alt+点击缩小。 */
+.editor-shell .timeline-panel.is-tool-zoom .tracks,
+.editor-shell .timeline-panel.is-tool-zoom .ruler,
+.editor-shell .timeline-panel.is-tool-zoom .timeline-clip {
+  cursor: zoom-in;
+}
+
+/* ---------- 5. 轨道与片段状态（A25 / §3.4） ---------- */
+
+/* 目标轨按钮：点亮 = #265bc1 填充、圆角 2、#ebebeb semibold 10px；未点亮 hover #2c2c2c。 */
+.editor-shell .track-id.track-target {
+  min-width: 18px;
+  padding: 1px var(--lc-space-2);
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--lc-radius-xs);
+  background: transparent;
+  color: var(--tl-text-2);
+  font-size: var(--lc-text-2xs);
+  font-weight: var(--lc-weight-semibold);
+  line-height: 14px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.12s ease-out, border-color 0.12s ease-out,
+    color 0.12s ease-out;
+}
+
+.editor-shell .track-id.track-target:hover {
+  background: var(--lc-surface-hover);
+  color: var(--lc-text-primary);
+}
+
+.editor-shell .track-id.track-target[aria-pressed='true'] {
+  background: #265bc1;
+  border-color: #265bc1;
+  color: var(--lc-text-primary);
+  font-weight: var(--lc-weight-semibold);
+}
+
+.editor-shell .track-head.is-targeted .track-id.track-target,
+.editor-shell .track-head.is-targeted .track-id.track-target[aria-pressed='true'] {
+  color: var(--lc-text-primary);
+}
+
+.editor-shell .track-id.track-target:focus-visible {
+  outline: var(--lc-focus-ring-width-tight) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-offset);
+}
+
+/* 目标轨整行：同色 #265bc1 的低透明度铺底 + 头部 2px 竖条。 */
+.editor-shell .track.is-targeted {
+  background: rgba(38, 91, 193, 0.07);
+}
+
+.editor-shell .track-head.is-targeted {
+  background: rgba(38, 91, 193, 0.16);
+}
+
+.editor-shell .track-head.is-targeted::before {
+  background: #265bc1;
+}
+
+/* 片段选中：亮度 +6%（hover 提升仍在选中之上）。 */
+.editor-shell .timeline-clip.is-selected {
+  filter: brightness(1.06);
+}
+
+.editor-shell .timeline-clip.is-selected:hover {
+  filter: brightness(1.14);
+}
+
+/* 片段禁用：同色相每通道 /2（保留渐变与斜纹，只压暗）。 */
+.editor-shell .timeline-clip.is-disabled {
+  opacity: 1;
+  filter: brightness(0.5);
+}
+
+/* ---------- 6. 待补钩子（当前 DOM 缺失，补上即生效；不改源码） ---------- */
+
+/* 序列 In/Out 区间 relighten +12%（§3.4）。
+   需要的钩子：片段 class .is-in-range 或 [data-in-range='true']。 */
+.editor-shell .timeline-clip.is-in-range,
+.editor-shell .timeline-clip[data-in-range='true'] {
+  filter: brightness(1.12);
+}
+
+/* fx 角标（timeline.rs:1090）：11px semibold、右对齐、top 8.5 / right 6。
+   需要的钩子：.timeline-clip 内 <span class="clip-fx-badge">；
+   内建参数被改动时追加 .is-intrinsic（#91a2ac），标准效果为 #e8c54a。 */
+.editor-shell .timeline-clip .clip-fx-badge {
+  position: absolute;
+  top: 8.5px;
+  right: 6px;
+  color: #e8c54a;
+  font-size: var(--lc-text-xs);
+  font-weight: var(--lc-weight-semibold);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.editor-shell .timeline-clip .clip-fx-badge.is-intrinsic {
+  color: #91a2ac;
+}
+
+/* 活动修剪边缘的显式钩子（当前由 :hover / :active 代偿）：
+   需要的钩子：.trim-handle.is-active。 */
+.editor-shell .timeline-clip .trim-handle.is-active {
+  --tl-bracket: #e53e3e;
+}
+
+/* ---------- 6.5 拖拽落点反馈（Timeline.tsx dropPreview） ---------- */
+
+/* 落点幽灵框：轨道行内绝对定位，left / width 由内联百分比给出；
+   视觉对齐片段盒（上下各 6px），白色 40% 填充 + 1.5px 白边。 */
+.editor-shell .track .timeline-drag-ghost {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  z-index: 4;
+  border: 1.5px solid #ffffff;
+  border-radius: var(--lc-radius-control-lg);
+  background: color-mix(in srgb, var(--tl-text) 40%, transparent);
+  pointer-events: none;
+}
+
+/* 无效落点：红 #e53e3e，18% 填充 + 1.5px 红边。 */
+.editor-shell .track .timeline-drag-ghost.is-invalid {
+  border-color: #e53e3e;
+  background: rgba(229, 62, 62, 0.18);
+}
+
+/* 素材库拖入：蓝色落点框，和片段内部拖动区分（accent 同目标轨 #265bc1 家族）。 */
+.editor-shell .track .timeline-drag-ghost.is-asset {
+  border-color: #7fb4ff;
+  background: rgba(127, 180, 255, 0.28);
+  box-shadow: 0 0 0 1px rgba(127, 180, 255, 0.35);
+}
+
+.editor-shell .track .timeline-drag-ghost.is-asset.is-invalid {
+  border-color: #e53e3e;
+  background: rgba(229, 62, 62, 0.18);
+  box-shadow: none;
+}
+
+/* 落点轨道行：1px 内侧白描边 + 微亮底。 */
+.editor-shell .track.is-drop-target {
+  background: color-mix(in srgb, var(--tl-text) 5%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tl-text) 50%, transparent);
+  transition: background-color 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+
+/* 无效落点轨道行：1px 内侧红描边 + 淡红底。 */
+.editor-shell .track.is-drop-invalid {
+  background: rgba(229, 62, 62, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(229, 62, 62, 0.7);
+  transition: background-color 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+
+/* ---------- 7. 降级：prefers-reduced-motion 全部关掉 ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .timeline-clip,
+  .editor-shell .timeline-clip .trim-handle,
+  .editor-shell .timeline-snap-guide,
+  .editor-shell .track-id.track-target,
+  .editor-shell .timeline-marquee,
+  .editor-shell .track.is-drop-target,
+  .editor-shell .track.is-drop-invalid {
+    transition: none;
+  }
+}
+
+/* ---------- 8. 片段缩略图（FilmCraft 剪辑块的帧画面带） ---------- */
+
+.editor-shell .timeline-clip .clip-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.42;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 0;
+  user-select: none;
+}
+
+.editor-shell .timeline-clip .clip-label,
+.editor-shell .timeline-clip .clip-timecode,
+.editor-shell .timeline-clip .clip-fx-badge,
+.editor-shell .timeline-clip .clip-link,
+.editor-shell .timeline-clip .clip-nested-badge,
+.editor-shell .timeline-clip .clip-envelope,
+.editor-shell .timeline-clip .clip-waveform {
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .timeline-clip .clip-thumb {
+    transition: none;
+  }
+}
+
+/* ---------- 9. 编辑点括号（Trim Monitor 打开时的剪点指示） ---------- */
+
+.editor-shell .timeline-edit-point {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  margin-left: -1px;
+  border-left: 2px solid var(--trim-hot, #f2c43d);
+  pointer-events: none;
+  z-index: 5;
+  filter: drop-shadow(0 0 3px rgba(242, 196, 61, 0.55));
+}
+
+.editor-shell .timeline-edit-point::before,
+.editor-shell .timeline-edit-point::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.editor-shell .timeline-edit-point::before {
+  top: 0;
+  border-top: 7px solid var(--trim-hot, #f2c43d);
+}
+
+.editor-shell .timeline-edit-point::after {
+  bottom: 0;
+  border-bottom: 7px solid var(--trim-hot, #f2c43d);
+}
+
+.editor-shell .timeline-edit-point.is-ripple {
+  --trim-hot: #e53e3e;
+}
+
+.editor-shell .timeline-edit-point.is-roll {
+  --trim-hot: #f2c43d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .timeline-edit-point {
+    filter: none;
+  }
+}
+
+/* ---------- 10. 转场拖放落点（效果面板的转场卡拖到剪点） ---------- */
+
+.editor-shell .timeline-transition-drop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  margin-left: -12px;
+  border-left: 2px solid #f2c43d;
+  border-right: 2px solid #f2c43d;
+  background: rgba(242, 196, 61, 0.18);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.editor-shell .timeline-transition-drop.is-invalid {
+  border-color: #e53e3e;
+  background: rgba(229, 62, 62, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .timeline-transition-drop {
+    transition: none;
+  }
+}
+
+/* ---------- 11. 关键帧直接操作（T9） ---------- */
+
+/* 参数关键帧行原本压在音量包络层之上（z-index 8 > 7），同一时间点上的小方块会挡住包络点。
+   T9 把关键帧行降到包络层之下：时间/位置重叠时优先命中可直接拖动的包络点。 */
+.editor-shell .timeline-keyframe-row {
+  z-index: 6;
+}
+
+.editor-shell .timeline-envelope-editor .envelope-point {
+  touch-action: none;
+}
+
+.editor-shell .timeline-keyframe-mark {
+  touch-action: none;
+}
+
+/* ---------- 12. 音频片段音量线（FilmCraft 式直接拖拽改音量） ---------- */
+
+/* 音量线：白色 1px + 深色阴影，贴在片段体上（与波形同层之上、包络之下）。 */
+.editor-shell .timeline-clip .clip-gain-line {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 0;
+  border-top: var(--lc-border-width) solid color-mix(in srgb, var(--tl-text) 92%, transparent);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.editor-shell .timeline-clip .clip-gain-line.is-active {
+  border-top-color: #f2c43d;
+  box-shadow: 0 0 0 1px rgba(242, 196, 61, 0.35);
+}
+
+/* 命中带：±6px，光标为上下调整；拖拽中同样高亮。 */
+.editor-shell .timeline-clip .clip-gain-hit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 13px;
+  margin-top: -6px;
+  cursor: ns-resize;
+  touch-action: none;
+  z-index: 4;
+}
+
+.editor-shell .timeline-clip .clip-gain-hit.is-active {
+  box-shadow: inset 0 0 0 1px rgba(242, 196, 61, 0.35);
+}
+
+/* 拖动提示：始终宽高固定，靠指针但不随数值抖动。 */
+.timeline-volume-tip {
+  position: fixed;
+  z-index: 90;
+  padding: 3px var(--lc-space-4);
+  border-radius: var(--lc-radius-control-lg);
+  background: rgba(8, 10, 14, 0.92);
+  border: var(--lc-border-width) solid color-mix(in srgb, var(--tl-text) 18%, transparent);
+  color: #f4f5f7;
+  font: 600 12px/1.2 "Cascadia Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.timeline-volume-tip-note {
+  margin-left: var(--lc-space-3);
+  color: rgba(242, 196, 61, 0.9);
+  font-weight: var(--lc-weight-medium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .timeline-clip .clip-gain-hit {
+    transition: none;
+  }
+}
+
+/* ── 13. 时间线工具栏「更多」菜单 ───────────────────────────
+   菜单经 portal 挂到 .editor-shell 并用 position: fixed，避开工具栏 overflow / 尺寸收容的祖先裁切。 */
+.editor-shell .timeline-toolbar .timeline-zoom {
+  flex: 0 0 auto;
+}
+
+.editor-shell .timeline-more-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 168px;
+  max-width: calc(100vw - 16px);
+  overflow-y: auto;
+  padding: 5px;
+  color: var(--tl-text);
+  background: var(--tl-surface-2);
+  border: var(--lc-border-width) solid var(--tl-line-strong);
+  border-radius: var(--lc-radius-lg);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  font-family: var(--font-sans);
+}
+
+.editor-shell .timeline-more-menu button {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  color: var(--tl-text);
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-shell .timeline-more-menu button > span {
+  flex: 1;
+}
+
+.editor-shell .timeline-more-menu button kbd {
+  color: var(--tl-text-3);
+  font-family: var(--lc-font-mono);
+  font-size: 9.5px;
+}
+
+.editor-shell .timeline-more-menu button.is-active {
+  background: var(--tl-accent-soft);
+}
+
+.editor-shell .timeline-more-menu button[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.editor-shell .timeline-more-menu button:hover:not([aria-disabled='true']),
+.editor-shell .timeline-more-menu button:focus-visible {
+  background: var(--tl-surface-3);
+  outline: none;
+}
+
+.editor-shell .timeline-more-menu button:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--tl-accent);
+}

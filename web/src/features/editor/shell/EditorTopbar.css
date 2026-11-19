@@ -1,0 +1,368 @@
+/*
+ * 编辑器外壳顶栏（P0）——48px 单行。
+ *
+ * 只使用编辑器深色令牌（--lc-*），不跟随全局浅色主题；画布深色边界见
+ * EditorShellFrame.css。旧 .menu-bar 样式保留在 app.css 供回退，但本轮不再渲染。
+ */
+
+.ed-topbar {
+  position: relative;
+  z-index: 60;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 0 10px 0 var(--lc-space-4);
+  background: var(--surface, var(--lc-chrome));
+  border-bottom: var(--lc-border-width) solid var(--line-strong, var(--lc-line-strong));
+  color: var(--text-2, var(--lc-text-secondary));
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-sm);
+}
+
+.ed-topbar__left,
+.ed-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  min-width: 0;
+}
+
+.ed-topbar__left {
+  flex: 0 1 auto;
+}
+
+.ed-topbar__actions {
+  flex: none;
+}
+
+.ed-topbar__spacer {
+  flex: 1 1 auto;
+  min-width: 8px;
+}
+
+.ed-topbar__divider {
+  flex: none;
+  width: 1px;
+  height: 18px;
+  margin: 0 var(--lc-space-1);
+  background: var(--line-strong, var(--lc-line-strong));
+}
+
+/* ── 通用按钮 ─────────────────────────────────────────────── */
+
+.ed-icon-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--lc-radius-control);
+  background: transparent;
+  color: var(--text-2, var(--lc-text-secondary));
+  cursor: pointer;
+}
+
+.ed-icon-btn:hover:not(:disabled) {
+  background: var(--surface-3, var(--lc-surface-hover));
+  color: var(--text, var(--lc-text-strong));
+}
+
+.ed-icon-btn:active:not(:disabled) {
+  background: var(--surface-3, var(--lc-surface-selected));
+}
+
+.ed-icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ed-icon-btn.is-open {
+  background: var(--surface-2, var(--lc-surface-raised));
+  color: var(--text, var(--lc-text-strong));
+}
+
+.ed-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lc-space-3);
+  height: 26px;
+  padding: 0 10px;
+  border: var(--lc-border-width) solid var(--line, var(--lc-line));
+  border-radius: var(--lc-radius-control);
+  background: var(--surface-2, var(--lc-surface-raised));
+  color: var(--text-2, var(--lc-text-secondary));
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-sm);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ed-btn:hover:not(:disabled) {
+  border-color: var(--line-strong, var(--lc-line-strong));
+  color: var(--text, var(--lc-text-strong));
+}
+
+.ed-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ed-btn--quiet {
+  background: transparent;
+}
+
+.ed-btn--primary {
+  border-color: var(--focus, var(--lc-accent-line));
+  /* 设计层主按钮令牌（浅色 #141414/深色 #f2f2ef，满足 ≥4.5:1）。 */
+  background: var(--btn, var(--lc-accent));
+  color: var(--btn-text, #ffffff);
+}
+
+.ed-btn--primary:hover:not(:disabled) {
+  background: var(--btn-hover, var(--lc-accent-hover));
+  color: var(--btn-text, #ffffff);
+}
+
+.ed-icon-btn:focus-visible,
+.ed-btn:focus-visible,
+.ed-crumbs__link:focus-visible,
+.ed-menu-trigger:focus-visible,
+.ed-menu__entry:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus, var(--lc-accent-line));
+  outline-offset: var(--lc-focus-offset);
+}
+
+/* ── 面包屑 ───────────────────────────────────────────────── */
+
+.ed-crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ed-crumbs__link {
+  padding: var(--lc-space-1) var(--lc-space-2);
+  border: 0;
+  border-radius: var(--lc-radius-control);
+  background: transparent;
+  color: var(--text-3, var(--lc-text-muted));
+  font: inherit;
+  cursor: pointer;
+}
+
+.ed-crumbs__link:hover {
+  color: var(--text, var(--lc-text-strong));
+}
+
+.ed-crumbs__sep {
+  color: var(--text-3, var(--lc-text-faint));
+  font-size: var(--lc-text-sm);
+}
+
+.ed-crumbs__item {
+  min-width: 0;
+  max-width: 200px;
+  overflow: hidden;
+  color: var(--text-2, var(--lc-text-secondary));
+  text-overflow: ellipsis;
+}
+
+.ed-crumbs__item--current {
+  color: var(--text, var(--lc-text-primary));
+  font-weight: var(--lc-weight-semibold);
+}
+
+/* ── 保存态 ───────────────────────────────────────────────── */
+
+.ed-save {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lc-space-3);
+  height: 22px;
+  margin-left: var(--lc-space-2);
+  padding: 0 var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--line, var(--lc-line-soft));
+  border-radius: var(--lc-radius-round);
+  color: var(--text-3, var(--lc-text-muted));
+  font-size: var(--lc-text-xs);
+  white-space: nowrap;
+}
+
+.ed-save__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dot-green, var(--lc-success));
+}
+
+.ed-save--dirty .ed-save__dot {
+  background: var(--dot-amber, var(--lc-warning));
+}
+
+.ed-save--saving .ed-save__dot {
+  background: var(--dot-blue, var(--lc-accent));
+}
+
+.ed-save--error .ed-save__dot {
+  background: var(--dot-red, var(--lc-danger));
+}
+
+/* ── 主题切换（设计层组件在深色顶栏里的局部覆盖）───────────── */
+
+.ed-topbar .ed-topbar__theme {
+  flex: none;
+  height: 28px;
+  padding: var(--lc-space-1);
+  border-radius: 6px;
+}
+
+.ed-topbar .ed-topbar__theme .lc-theme-toggle__btn {
+  height: 22px;
+  padding: 0 var(--lc-space-4);
+  border-radius: var(--lc-radius-control-lg);
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-xs);
+}
+
+.ed-topbar .ed-topbar__theme .lc-theme-toggle__btn.is-active {
+  background: var(--surface-2, var(--lc-surface-raised));
+  color: var(--text, var(--lc-text-primary));
+}
+
+.ed-topbar .ed-topbar__theme .lc-theme-toggle__btn:hover:not(:disabled) {
+  color: var(--text, var(--lc-text-primary));
+}
+
+.ed-topbar .ed-topbar__theme .lc-theme-toggle__btn > svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── 溢出菜单 ─────────────────────────────────────────────── */
+
+.ed-menu {
+  position: absolute;
+  top: calc(100% + 1px);
+  right: 8px;
+  z-index: 500;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(210px, 1fr));
+  gap: 10px 20px;
+  width: min(780px, calc(100vw - 24px));
+  max-height: min(70vh, 640px);
+  padding: var(--lc-space-5) 14px;
+  overflow: auto;
+  border: var(--lc-border-width) solid var(--line-strong, var(--lc-line-strong));
+  border-radius: var(--lc-radius-control-lg);
+  background: var(--surface, var(--lc-surface));
+  box-shadow: var(--shadow-float, 0 18px 40px rgba(0, 0, 0, 0.52));
+}
+
+.ed-menu__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-2);
+  min-width: 0;
+}
+
+.ed-menu__label {
+  margin: 0;
+  padding: var(--lc-space-1) var(--lc-space-3);
+  color: var(--text-3, var(--lc-text-faint));
+  font-size: var(--lc-text-2xs);
+  font-weight: var(--lc-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ed-menu__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ed-menu__entry {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lc-space-5);
+  width: 100%;
+  padding: var(--lc-space-2) var(--lc-space-3);
+  border: 0;
+  border-radius: var(--lc-radius-control);
+  background: transparent;
+  color: var(--text-2, var(--lc-text-secondary));
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-sm);
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ed-menu__entry:hover:not(:disabled) {
+  background: var(--surface-3, var(--lc-surface-hover));
+  color: var(--text, var(--lc-text-primary));
+}
+
+.ed-menu__entry:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.ed-menu__entry-label {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--lc-space-3);
+}
+
+.ed-menu__check {
+  color: var(--focus, var(--lc-accent));
+}
+
+.ed-menu__entry kbd {
+  flex: none;
+  color: var(--text-3, var(--lc-text-faint));
+  font-family: var(--lc-font-mono);
+  font-size: var(--lc-text-2xs);
+}
+
+@media (max-width: 1180px) {
+  .ed-menu {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
+  .ed-crumbs__item {
+    max-width: 132px;
+  }
+}
+
+@media (max-width: 980px) {
+  .ed-menu {
+    grid-template-columns: minmax(200px, 1fr);
+    max-height: 76vh;
+  }
+
+  .ed-topbar .ed-btn--quiet {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-icon-btn,
+  .ed-btn {
+    transition: none;
+  }
+}

@@ -1,0 +1,186 @@
+/*
+ * 应用外壳布局（IconRail 64px + Sidebar 268px + 主区）。
+ * 只做布局与外壳专属小部件样式；颜色/字号/圆角一律引用设计层令牌。
+ */
+
+.lc-app-shell {
+  box-sizing: border-box;
+  display: flex;
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  transition:
+    background-color var(--motion-theme) ease,
+    color var(--motion-theme) ease;
+}
+
+/* ── skip link：键盘首个 Tab 可见，跳到主内容（#lc-main-content） ── */
+.lc-skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  padding: var(--lc-space-4) var(--lc-space-fc-14);
+  border-radius: var(--radius-sm);
+  background: var(--surface-inverse);
+  color: var(--bg);
+  font-size: var(--fs-meta);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 20px));
+  transition: transform var(--motion-fast) ease;
+}
+
+.lc-skip-link:focus-visible {
+  transform: translateY(0);
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+
+#lc-main-content:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: calc(var(--lc-focus-ring-offset) * -1);
+}
+
+.lc-app-shell__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.lc-app-shell__topbar {
+  flex: none;
+}
+
+.lc-app-shell__content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 22px var(--space-7) var(--space-8);
+}
+
+/* 整屏页面（如 /live 控制台）：内容区不滚、由页面内部面板自己滚动。 */
+.lc-app-shell__content--flush {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 迁入外壳的旧页面顶栏状态块（如 /live 的自动刷新提示）。 */
+.lc-app-shell__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  white-space: nowrap;
+}
+
+.lc-app-shell__status.is-ok {
+  color: var(--ink-green);
+}
+
+.lc-app-shell__updated {
+  color: var(--text-3);
+  font-size: var(--fs-meta);
+  white-space: nowrap;
+}
+
+/* ── 顶栏搜索（未接线：TextField disabled + 提示，素材索引迁移后接入） ── */
+.lc-app-shell__searchbox {
+  flex: none;
+  width: 240px;
+}
+
+.lc-app-shell__search {
+  width: 100%;
+}
+
+/* ── 侧边栏底部用户区 ───────────────────────────────────────── */
+.lc-app-shell__user {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-fc-10);
+  min-width: 0;
+  padding: var(--lc-space-fc-10) var(--lc-space-4) var(--lc-space-1);
+}
+
+.lc-app-shell__avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-inverse);
+  color: var(--bg);
+  font-size: var(--fs-body);
+  font-weight: 700;
+}
+
+.lc-app-shell__user-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.lc-app-shell__user-text strong {
+  color: var(--text);
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+.lc-app-shell__user-text span {
+  color: var(--text-3);
+  font-size: var(--fs-meta);
+}
+
+.lc-app-shell__user-badge {
+  margin-left: auto;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* 折叠侧边栏时隐藏用户区文字（Sidebar 的折叠态只处理自身内容）。 */
+.lc-sidebar--collapsed .lc-app-shell__user {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.lc-sidebar--collapsed .lc-app-shell__user-text,
+.lc-sidebar--collapsed .lc-app-shell__user-badge {
+  display: none;
+}
+
+/* ── 响应式 ─────────────────────────────────────────────────── */
+@media (max-width: 1120px) {
+  .lc-app-shell__searchbox {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .lc-app-shell__content {
+    padding: var(--lc-space-fc-18) var(--space-5) var(--space-7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-app-shell {
+    transition: none;
+  }
+}

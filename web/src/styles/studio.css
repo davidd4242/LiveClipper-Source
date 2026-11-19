@@ -1,0 +1,334 @@
+/*
+ * Studio 页面（/studio）接入 AppShell 后的主题适配。
+ *
+ * 旧工作台（features/studio/studio.css + workbench.css）仍然使用深色 --lc-* 令牌。
+ * 这里把 --lc-* 在 .lc-studio-page 作用域内重映射到 design/tokens.css 的 --* 令牌，
+ * 让工作台跟随浅/深主题；缩略图、音频与预览画布保持深色。
+ */
+
+.lc-studio-page {
+  /* ── 旧深色令牌 → 新设计令牌 ─────────────────────────────── */
+  --lc-bg-root: var(--bg);
+  --lc-chrome: var(--surface);
+  --lc-surface: var(--surface);
+  --lc-surface-sunken: var(--surface-2);
+  --lc-surface-raised: var(--surface-2);
+  --lc-surface-panel-head: var(--surface-3);
+  --lc-surface-input: var(--surface-3);
+  --lc-surface-selected: color-mix(in srgb, var(--ink-blue) 12%, transparent);
+  --lc-surface-hover: var(--surface-3);
+  --lc-line-strong: var(--line-strong);
+  --lc-line: var(--line);
+  --lc-line-soft: var(--line);
+  --lc-line-inset: var(--line);
+  --lc-text-primary: var(--text);
+  --lc-text-strong: var(--text);
+  --lc-text-secondary: var(--text-2);
+  --lc-text-muted: var(--text-2);
+  --lc-text-faint: var(--text-3);
+  --lc-text-inverse: var(--surface);
+  --lc-accent: var(--ink-blue);
+  --lc-accent-hover: var(--focus);
+  --lc-accent-pressed: var(--focus);
+  --lc-accent-soft: color-mix(in srgb, var(--ink-blue) 12%, transparent);
+  --lc-accent-line: color-mix(in srgb, var(--ink-blue) 45%, transparent);
+  --lc-focus-ring: var(--focus);
+  --lc-selection-border: var(--control-border);
+  --lc-live: var(--ink-amber);
+  --lc-success: var(--ink-green);
+  --lc-success-text: var(--ink-green);
+  --lc-success-surface: color-mix(in srgb, var(--dot-green) 14%, transparent);
+  --lc-warning: var(--ink-amber);
+  --lc-warning-surface: color-mix(in srgb, var(--dot-amber) 16%, transparent);
+  --lc-danger: var(--ink-red);
+  --lc-danger-surface: color-mix(in srgb, var(--dot-red) 12%, transparent);
+  --lc-font-ui: var(--font-sans);
+  --lc-font-mono: var(--font-mono);
+  --lc-text-2xs: 10px;
+  --lc-text-xs: 11px;
+  --lc-text-sm: 12px;
+  --lc-text-md: 13px;
+  --lc-text-lg: 14px;
+  --lc-text-title: 22px;
+  --lc-weight-regular: 400;
+  --lc-weight-medium: 500;
+  --lc-weight-semibold: 600;
+  --lc-weight-bold: 700;
+  --lc-leading-tight: 1.2;
+  --lc-space-1: 2px;
+  --lc-space-2: 4px;
+  --lc-space-3: 6px;
+  --lc-space-4: 8px;
+  --lc-space-5: 12px;
+  --lc-space-6: 16px;
+  --lc-space-7: 24px;
+  --lc-space-8: 32px;
+  --lc-radius-sm: var(--radius-sm);
+  --lc-radius-md: var(--radius-md);
+  --lc-radius-round: var(--radius-pill);
+  --lc-border-width: 1px;
+  --lc-motion-fast: var(--motion-fast);
+  --lc-motion-panel: var(--motion-theme);
+  --lc-z-toast: 90;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+}
+
+/* ── 顶部动作条：搜索框从旧顶栏迁入 ─────────────────────────── */
+
+.lc-studio-page .studio-workbench {
+  flex: 1;
+  min-height: 0;
+  background: transparent;
+}
+
+.lc-studio-page .studio-actionbar {
+  height: 46px;
+  gap: var(--lc-space-fc-10);
+  padding: 0 var(--lc-space-5);
+  border-bottom-color: var(--line);
+  background: var(--surface);
+}
+
+.lc-studio-page .studio-tabs {
+  flex: 0 0 auto;
+}
+
+.lc-studio-page .studio-tab.is-active {
+  background: color-mix(in srgb, var(--ink-blue) 12%, transparent);
+  border-color: color-mix(in srgb, var(--ink-blue) 34%, transparent);
+  color: var(--ink-blue);
+}
+
+.lc-studio-page .lc-studio-search {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--lc-space-3);
+  min-width: 120px;
+  max-width: 320px;
+  height: 28px;
+  padding: 0 var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-3);
+  transition: border-color var(--motion-fast), background-color var(--motion-fast);
+}
+
+.lc-studio-page .lc-studio-search:focus-within {
+  border-color: var(--focus);
+  background: var(--surface);
+}
+
+.lc-studio-page .lc-studio-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-meta);
+}
+
+.lc-studio-page .lc-studio-search input::placeholder {
+  color: var(--text-3);
+}
+
+.lc-studio-page .wb-actions {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+}
+
+/* ── 旧样式里的硬编码深色：改成跟随主题 ───────────────────── */
+
+.lc-studio-page .studio-filters button {
+  color: var(--text-2);
+}
+
+.lc-studio-page .studio-filters button.is-active {
+  color: var(--ink-blue);
+  background: color-mix(in srgb, var(--ink-blue) 10%, transparent);
+  border-color: color-mix(in srgb, var(--ink-blue) 30%, transparent);
+}
+
+.lc-studio-page .wb-badge--ok {
+  color: var(--ink-green);
+  background: color-mix(in srgb, var(--dot-green) 14%, transparent);
+  border-color: color-mix(in srgb, var(--dot-green) 34%, transparent);
+}
+
+.lc-studio-page .wb-badge--warn {
+  color: var(--ink-amber);
+  background: color-mix(in srgb, var(--dot-amber) 16%, transparent);
+  border-color: color-mix(in srgb, var(--dot-amber) 34%, transparent);
+}
+
+.lc-studio-page .wb-badge--danger {
+  color: var(--ink-red);
+  background: color-mix(in srgb, var(--dot-red) 12%, transparent);
+  border-color: color-mix(in srgb, var(--dot-red) 34%, transparent);
+}
+
+.lc-studio-page .wb-badge--active {
+  color: var(--ink-blue);
+  background: color-mix(in srgb, var(--ink-blue) 12%, transparent);
+  border-color: color-mix(in srgb, var(--ink-blue) 34%, transparent);
+}
+
+.lc-studio-page .wb-banner {
+  border-bottom-color: color-mix(in srgb, var(--dot-amber) 32%, transparent);
+  background: color-mix(in srgb, var(--dot-amber) 10%, transparent);
+  color: var(--ink-amber);
+}
+
+/* 浅色琥珀底使原文字仅 4.31:1；只加深本页告警，保留深色配色。 */
+:root[data-theme='light'] .lc-studio-page .wb-banner {
+  color: color-mix(in srgb, var(--ink-amber) 80%, var(--text));
+}
+
+.lc-studio-page .wb-note--warning {
+  border-color: color-mix(in srgb, var(--dot-amber) 34%, transparent);
+  background: color-mix(in srgb, var(--dot-amber) 8%, transparent);
+}
+
+.lc-studio-page .wb-media-tag {
+  color: #dfe9f5;
+}
+
+/* ── 画布区域：缩略图 / 音频播放器保持深色观感 ─────────────── */
+
+.lc-studio-page .wb-project-thumb,
+.lc-studio-page .wb-media-thumb,
+.lc-studio-page .wb-audio-player {
+  color-scheme: dark;
+}
+
+.lc-studio-page .wb-project-thumb,
+.lc-studio-page .wb-media-thumb {
+  --studio-thumb-a: #404f67;
+  --studio-thumb-b: #17202f;
+}
+
+.lc-studio-page .wb-audio-player {
+  background: #151516;
+  border-radius: var(--radius-sm);
+}
+
+/* ── 宽屏收敛：侧栏占位后三栏仍不横向溢出 ─────────────────── */
+
+@media (max-width: 1440px) {
+  .lc-studio-page .wb-layout {
+    grid-template-columns: minmax(190px, 230px) minmax(0, 1fr) minmax(220px, 250px);
+  }
+}
+
+@media (max-width: 1240px) {
+  .lc-studio-page .wb-layout {
+    grid-template-columns: minmax(180px, 215px) minmax(0, 1fr);
+  }
+
+  .lc-studio-page .wb-overview {
+    display: none;
+  }
+}
+
+/* ── a11y 修复（task-45）：/studio 对比度与搜索焦点 ─────────── */
+
+/* 顶栏状态徽标在 AppShell 内、不在 .lc-studio-page 下：只在本页生效。
+   旧 ink-green 对 #f2f2f0 为 4.46 → 混入正文墨色后 5.87。 */
+body:has(.lc-studio-page) .lc-app-shell__status.is-ok {
+  color: color-mix(in srgb, var(--ink-green) 80%, var(--text));
+}
+
+/* Tab 选中：12% 蓝底上 #3d5bff 仅 4.29 → 加深前景 5.69。 */
+.lc-studio-page .studio-tab.is-active {
+  color: color-mix(in srgb, var(--ink-blue) 80%, var(--text));
+}
+
+/* 日期过滤选中：10% 蓝底上 4.23 → 5.62。 */
+.lc-studio-page .studio-filters button.is-active {
+  color: color-mix(in srgb, var(--ink-blue) 80%, var(--text));
+}
+
+/* 项目行次级文字：选中蓝底上 text-3 为 4.35 → text-2 5.46。 */
+.lc-studio-page .wb-project-text span {
+  color: var(--text-2);
+}
+
+/* 等宽 kicker：旧 #79bfff 在浅底 1.74 / 白底 1.96 → 主题 ink-blue 4.8+。 */
+.lc-studio-page .wb-kicker {
+  color: color-mix(in srgb, var(--ink-blue) 80%, var(--text));
+}
+
+/* 搜索框输入：旧 outline:0 导致键盘焦点不可见 → 2px 主题环。 */
+.lc-studio-page .lc-studio-search input:focus-visible {
+  outline: var(--ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+  border-radius: var(--lc-radius-xs);
+}
+
+/* 深色主按钮：白字对 #8fa0ff 仅 2.43 → 深色文字 7.77（hover 5.63）。 */
+:root[data-theme='dark'] .lc-studio-page .wb-button--primary {
+  color: var(--btn-text);
+}
+
+/* 状态绿徽标（本轮补）：ink-green 对 14% 绿底仅 4.32 → 混入墨色后 5.3+。 */
+.lc-studio-page .wb-badge--ok {
+  color: color-mix(in srgb, var(--ink-green) 80%, var(--text));
+}
+
+/* ── B13-2：FilmCraft 工程导入 ─────────────────────────────── */
+.lc-import-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.lc-import-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-3);
+  padding: var(--lc-space-5) var(--lc-space-fc-14);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--fs-body);
+}
+
+.lc-import-summary strong {
+  color: var(--ink-green);
+}
+
+.lc-import-summary p {
+  margin: 0;
+  color: var(--text-2);
+}
+
+.lc-import-summary__warn {
+  color: var(--ink-amber) !important;
+}
+
+.lc-import-summary__muted {
+  color: var(--text-3) !important;
+}
+
+.lc-import-error {
+  margin: 0;
+  padding: var(--lc-space-4) var(--lc-space-5);
+  border: var(--lc-border-width) solid color-mix(in srgb, var(--ink-red) 35%, var(--line));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--ink-red) 9%, var(--surface));
+  color: var(--ink-red);
+  font-size: var(--fs-meta);
+}

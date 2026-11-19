@@ -1,0 +1,103 @@
+.mmu {
+  width: min(520px, calc(100vw - 32px));
+  padding: 18px 20px;
+  border: 1px solid var(--line, #3a3a3f);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-2, #1c1c20);
+  color: var(--text, #ececf0);
+}
+
+.mmu[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mmu::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.mmu__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mmu__note,
+.mmu__muted,
+.mmu__error,
+.mmu__ok {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.mmu__muted {
+  display: block;
+  color: var(--text-3, #a0a0aa);
+}
+
+.mmu__error {
+  color: var(--danger, #ff6b6b);
+}
+
+.mmu__facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 14px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.mmu__facts dt {
+  color: var(--text-3, #a0a0aa);
+}
+
+.mmu__facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.mmu__facts code {
+  margin-left: 8px;
+  color: var(--text-3, #a0a0aa);
+}
+
+.mmu__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mmu__btn {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line, #3a3a3f);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface, #141417);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.mmu__btn--danger {
+  border-color: var(--danger, #ff6b6b);
+  color: var(--danger, #ff6b6b);
+}
+
+.mmu__btn--ghost {
+  background: transparent;
+}
+
+.mmu__btn:focus-visible {
+  outline: 2px solid var(--accent, #ff9a3c);
+  outline-offset: 2px;
+}
+
+.mmu__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

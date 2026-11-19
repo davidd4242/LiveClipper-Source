@@ -1,0 +1,161 @@
+.lc-dialog {
+  position: fixed;
+  inset: 0;
+  /* 层叠契约：modal 1000 < toast 1100（见 design/tokens.css --z-*）。 */
+  z-index: var(--z-modal, 1000);
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+}
+
+.lc-dialog__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  animation: lc-dialog-fade var(--motion-fast) ease;
+}
+
+.lc-dialog__panel {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 96px);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  animation: lc-dialog-in var(--motion-theme) ease;
+}
+
+.lc-dialog__panel:focus-visible {
+  /* 面板被程序化聚焦（无内部可聚焦元素时的兜底）用实色令牌环，不用透明光环 */
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: calc(var(--ring-offset) * -1);
+}
+
+.lc-dialog__panel--sm {
+  max-width: 420px;
+}
+
+.lc-dialog__panel--md {
+  max-width: 560px;
+}
+
+.lc-dialog__panel--lg {
+  max-width: 760px;
+}
+
+.lc-dialog__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-5) var(--space-3);
+}
+
+.lc-dialog__heading {
+  min-width: 0;
+}
+
+.lc-dialog__title {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-h2);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.lc-dialog__description {
+  margin: var(--lc-space-3) 0 0;
+  color: var(--text-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+.lc-dialog__close {
+  box-sizing: border-box;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+}
+
+.lc-dialog__close:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.lc-dialog__close:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: var(--ring-offset);
+}
+
+.lc-dialog__close svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.lc-dialog__body {
+  overflow: auto;
+  padding: 0 var(--space-5) var(--space-4);
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+
+.lc-dialog__foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: var(--lc-border-width) solid var(--line);
+}
+
+@keyframes lc-dialog-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lc-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-dialog__overlay,
+  .lc-dialog__panel {
+    animation: none;
+  }
+}

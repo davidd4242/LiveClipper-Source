@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <!--
+      主题引导：在首帧渲染前把持久化主题写回 <html data-theme>，避免刷新后闪烁或
+      主题错位（编辑器外壳跟随 data-theme；外壳页面 AppShell 挂载后也会再同步一次）。
+      键名与 src/design/theme.ts 的 THEME_STORAGE_KEY（lc-studio-theme）保持一致。
+    -->
+    <script>
+      try {
+        var storedTheme = window.localStorage.getItem('lc-studio-theme');
+        if (storedTheme === 'light' || storedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', storedTheme);
+          document.documentElement.style.colorScheme = storedTheme;
+        }
+      } catch (error) {
+        /* 隐私模式等读取失败时保持默认深色。 */
+      }
+    </script>
+    <!-- 桌面 WebView 启动遮罩：同步经典脚本，须早于 React chunk；普通浏览器自动不启用。 -->
+    <script src="/startup-splash.js"></script>
+    <title>LiveClipper Studio</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon.svg"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

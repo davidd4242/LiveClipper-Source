@@ -1,0 +1,329 @@
+/* R82 第一批：编辑器右侧栏（可见 rail）+ 转写字幕面板。
+   只消费既有 token（--lc-* / --space-* / --radius-*），不引入品牌色、不外链字体。 */
+
+.editor-next-page {
+  --r82-rail-width: 56px;
+}
+
+/* 旧 rail 已不渲染，右工具栏直接 flex 占位；不再给 engine 重复预留 rail 宽度（黑缝根因）。 */
+
+/* ── 右侧 rail ───────────────────────────────────────────── */
+
+.editor-next-page > .editor-next-rail {
+  position: fixed;
+  inset-block: 44px 0;
+  inset-inline-end: 0;
+  z-index: var(--lc-z-drawer, 40);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: var(--r82-rail-width);
+  padding: var(--space-3) 0;
+  border-left: var(--lc-border-width, 1px) solid var(--lc-line, #242426);
+  background: var(--lc-surface-panel-head, #1a1a1c);
+}
+
+/* 外壳顶栏在 44px 宿主状态条之上时，rail 跟着下移（与 r81 shell 的 drawer 覆盖同一套变量）。 */
+.editor-next-shell .editor-next-page > .editor-next-rail {
+  inset-block-start: calc(var(--r81-shell-top, 48px) + 44px);
+}
+
+.editor-next-rail__item {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px 2px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  color: var(--lc-text-secondary, #a5a5a0);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast, 150ms) ease,
+    color var(--motion-fast, 150ms) ease,
+    border-color var(--motion-fast, 150ms) ease;
+}
+
+.editor-next-rail__item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.editor-next-rail__caption {
+  font-family: var(--lc-font-ui, inherit);
+  font-size: var(--lc-text-2xs, 10px);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.editor-next-rail__item:hover:not(:disabled) {
+  color: var(--lc-text-primary, #f1f1ee);
+  background: var(--lc-surface-hover, #232324);
+}
+
+.editor-next-rail__item[data-active="true"],
+.editor-next-rail__item[data-active="true"]:hover:not(:disabled) {
+  color: var(--lc-text-primary, #f1f1ee);
+  background: var(--lc-surface-selected, #232324);
+  border-color: var(--lc-accent-line, #6b82ff);
+}
+
+.editor-next-rail__item:disabled {
+  cursor: not-allowed;
+  color: var(--lc-text-faint, #8f8f89);
+  opacity: var(--disabled-opacity, 0.55);
+}
+
+.editor-next-rail__item:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--ring-color, var(--lc-accent-line, #6b82ff));
+  outline-offset: var(--ring-offset, 2px);
+}
+
+/* 面板从 rail 左侧展开，rail 保持可见可切换。 */
+.editor-next-page > .editor-next-drawer {
+  inset-inline-end: var(--r82-rail-width);
+  width: min(480px, calc(100vw - var(--r82-rail-width)));
+}
+
+@media (max-width: 640px) {
+  .editor-next-page {
+    --r82-rail-width: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-next-rail__item {
+    transition: none;
+  }
+}
+
+/* ── 转写字幕面板 ─────────────────────────────────────────── */
+
+.editor-next-transcript {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4);
+  color: var(--lc-text-primary, #f1f1ee);
+  font: inherit;
+  font-size: var(--fs-body, 13.5px);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.editor-next-transcript h2,
+.editor-next-transcript h3 {
+  margin: 0;
+  font: inherit;
+  font-weight: 700;
+}
+
+.editor-next-transcript h3 {
+  font-size: var(--lc-text-sm, 12px);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--lc-text-secondary, #a5a5a0);
+}
+
+.editor-next-transcript p {
+  margin: 0;
+  max-width: 78ch;
+}
+
+.editor-next-transcript__heading {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.editor-next-transcript__heading p {
+  color: var(--lc-text-secondary, #a5a5a0);
+}
+
+.editor-next-transcript__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.editor-next-transcript__actions button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--lc-line-strong, #36363a);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--lc-control-surface-neutral, #232324);
+  color: var(--lc-text-primary, #f1f1ee);
+  font: inherit;
+  cursor: pointer;
+}
+
+.editor-next-transcript__actions button.is-primary:not(:disabled) {
+  border-color: var(--lc-accent-line, #6b82ff);
+  background: var(--lc-surface-selected, #232324);
+}
+
+.editor-next-transcript__actions button:hover:not(:disabled) {
+  border-color: var(--lc-accent-line, #6b82ff);
+}
+
+.editor-next-transcript__actions button:disabled {
+  cursor: not-allowed;
+  color: var(--lc-text-faint, #8f8f89);
+  border-style: dashed;
+}
+
+.editor-next-transcript__actions button:focus-visible,
+.editor-next-transcript summary:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--ring-color, var(--lc-accent-line, #6b82ff));
+  outline-offset: var(--ring-offset, 2px);
+}
+
+.editor-next-transcript__hint,
+.editor-next-transcript__muted {
+  color: var(--lc-text-secondary, #a5a5a0);
+  font-size: var(--lc-text-sm, 12px);
+}
+
+.editor-next-transcript__notice {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--lc-accent-line, #6b82ff);
+  background: var(--lc-surface-raised, #232324);
+}
+
+.editor-next-transcript__request {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--lc-line, #242426);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--lc-surface-sunken, #1a1a1c);
+}
+
+.editor-next-transcript__request[data-request-phase="error"] {
+  border-color: var(--lc-danger, #ff6b6f);
+  color: var(--lc-danger, #ff6b6f);
+}
+
+.editor-next-transcript__request[data-request-phase="accepted"],
+.editor-next-transcript__request[data-request-phase="linked"] {
+  border-color: var(--lc-accent-line, #6b82ff);
+}
+
+.editor-next-transcript__task,
+.editor-next-transcript__text {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--lc-line, #242426);
+}
+
+.editor-next-transcript__task-body {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.editor-next-transcript__chip {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--lc-line-strong, #36363a);
+  border-radius: var(--radius-pill, 999px);
+  font-size: var(--lc-text-xs, 11px);
+  color: var(--lc-text-primary, #f1f1ee);
+}
+
+.editor-next-transcript__task[data-task-status="running"] .editor-next-transcript__chip,
+.editor-next-transcript__task[data-task-status="pending"] .editor-next-transcript__chip {
+  border-color: var(--lc-accent-line, #6b82ff);
+}
+
+.editor-next-transcript__task[data-task-status="failed"] .editor-next-transcript__chip,
+.editor-next-transcript__task[data-task-status="interrupted"] .editor-next-transcript__chip {
+  border-color: var(--lc-danger, #ff6b6f);
+  color: var(--lc-danger, #ff6b6f);
+}
+
+.editor-next-transcript__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--lc-text-sm, 12px);
+  color: var(--lc-text-secondary, #a5a5a0);
+}
+
+.editor-next-transcript__progress progress {
+  flex: 1;
+  height: 6px;
+  accent-color: var(--lc-accent-line, #6b82ff);
+}
+
+.editor-next-transcript__segments {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 46vh;
+  overflow: auto;
+}
+
+.editor-next-transcript__segments li {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--lc-line-soft, #242426);
+}
+
+.editor-next-transcript__segments li:last-child {
+  border-bottom: 0;
+}
+
+.editor-next-transcript__time {
+  font-family: var(--lc-font-mono, ui-monospace, monospace);
+  font-size: var(--lc-text-xs, 11px);
+  color: var(--lc-text-faint, #8f8f89);
+}
+
+.editor-next-transcript__plain {
+  white-space: pre-wrap;
+}
+
+.editor-next-transcript__times {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.editor-next-transcript__times label {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: var(--space-1);
+  font-size: var(--lc-text-xs, 11px);
+}
+
+.editor-next-transcript input,
+.editor-next-transcript textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--lc-line-strong, #36363a);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--lc-surface-sunken, #1a1a1c);
+  color: var(--lc-text-primary, #f1f1ee);
+  font: inherit;
+}
+
+.editor-next-transcript textarea { resize: vertical; }
+.editor-next-transcript__actions a { align-self: center; color: var(--lc-accent-line, #6b82ff); }
+
+.editor-next-transcript__meta,
+.editor-next-transcript__checked {
+  color: var(--lc-text-faint, #8f8f89);
+  font-size: var(--lc-text-xs, 11px);
+}

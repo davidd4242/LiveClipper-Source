@@ -1,0 +1,714 @@
+/* ── A4 独立监控屏（/live/monitor）· 主题化收尾 ──────────────
+ * 页面自带 48px 轻工具栏与三栏沉浸布局；内部 .lw-monitor-* 结构沿用
+ * features/live/monitor.css。这里负责把旧深色 --lc-* 令牌映射到设计层
+ * 浅/深主题，并补充工具栏、键盘提示、房间列表折叠、空态与重连提示。
+ */
+
+.lc-monitor-page {
+  /* 旧组件令牌 → 设计层主题令牌（预览画面另行固定深色） */
+  --lc-bg-root: var(--bg);
+  --lc-chrome: var(--surface);
+  --lc-surface: var(--surface);
+  --lc-surface-sunken: var(--surface-2);
+  --lc-surface-raised: var(--surface-3);
+  --lc-surface-hover: var(--surface-3);
+  --lc-surface-input: var(--surface-2);
+  --lc-surface-panel-head: var(--surface-2);
+  --lc-surface-selected: color-mix(in srgb, var(--ink-blue) 12%, var(--surface));
+  --lc-line: var(--line);
+  --lc-line-soft: var(--line);
+  --lc-line-strong: var(--line-strong);
+  --lc-line-inset: var(--line);
+  --lc-text-primary: var(--text);
+  --lc-text-strong: var(--text);
+  --lc-text-secondary: var(--text-2);
+  --lc-text-muted: var(--text-2);
+  --lc-text-faint: var(--text-3);
+  --lc-text-inverse: var(--surface);
+  --lc-accent: var(--ink-blue);
+  --lc-accent-hover: var(--ink-blue);
+  --lc-accent-line: color-mix(in srgb, var(--ink-blue) 60%, var(--text));
+  --lc-accent-soft: color-mix(in srgb, var(--ink-blue) 12%, transparent);
+  --lc-success: var(--ink-green);
+  --lc-success-text: var(--ink-green);
+  --lc-success-surface: color-mix(in srgb, var(--ink-green) 14%, transparent);
+  --lc-warning: var(--ink-amber);
+  --lc-warning-surface: color-mix(in srgb, var(--ink-amber) 14%, transparent);
+  --lc-danger: var(--ink-red);
+  --lc-danger-surface: color-mix(in srgb, var(--ink-red) 14%, transparent);
+  --lc-live: var(--ink-red);
+  --lc-font-ui: var(--font-sans);
+  --lc-font-mono: var(--font-mono);
+  --lc-radius-sm: var(--radius-sm);
+  --lc-text-2xs: 10px;
+  --lc-text-xs: 11px;
+  --lc-text-sm: 12px;
+  --lc-text-md: 13px;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+/* ── 48px 轻工具栏 ─────────────────────────────────────── */
+
+.lc-monitor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-fc-10);
+  flex: 0 0 48px;
+  height: 48px;
+  padding: 0 var(--lc-space-5);
+  border-bottom: var(--lc-border-width) solid var(--line);
+  background: var(--surface);
+}
+
+.lc-monitor-toolbar__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-2);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
+}
+
+.lc-monitor-toolbar__back:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.lc-monitor-toolbar__back:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.lc-monitor-toolbar__room {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.lc-monitor-toolbar__room strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lc-monitor-toolbar__room span {
+  overflow: hidden;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lc-monitor-toolbar__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  flex: 0 0 auto;
+}
+
+.lc-monitor-toolbar__time {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+  white-space: nowrap;
+}
+
+.lc-monitor-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-2);
+  flex: 0 0 auto;
+}
+
+.lc-monitor-toolbar__actions .lc-theme-toggle {
+  margin: 0 var(--lc-space-1);
+}
+
+/* ── 主体三栏 ─────────────────────────────────────────── */
+
+.lc-monitor-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-4);
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--lc-space-4) var(--lc-space-5) var(--lc-space-fc-10);
+  overflow: hidden;
+}
+
+.lc-monitor-main .lw-monitor-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.lc-monitor-main .lw-monitor-grid.is-rooms-collapsed {
+  grid-template-columns: 46px minmax(0, 1fr) 332px;
+}
+
+/* 旧 app.css 的 .lw-panel / .lw-panel__head 是写死的深色渐变，
+ * 在浅色主题下会变成黑底黑字：这里按设计层表面色重铺。
+ * 预览面板（.lw-preview / 占位）在后面单独固定为深色，不受影响。 */
+.lc-monitor-page .lw-panel {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.lc-monitor-page .lw-panel__head {
+  background: var(--surface-2);
+  border-bottom-color: var(--line);
+}
+
+.lc-monitor-page .lw-panel__head h2 {
+  color: var(--text);
+}
+
+.lc-monitor-page .lw-panel__head > div:first-child > span {
+  color: var(--text-3);
+}
+
+.lc-monitor-page .lw-monitor-rooms .lw-panel__head {
+  gap: var(--lc-space-3);
+}
+
+.lc-monitor-page .lw-monitor-rooms .lw-panel__head > div:first-child {
+  min-width: 0;
+}
+
+.lc-monitor-page .lw-monitor-rooms .lw-panel__head .lw-panel__head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-1);
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* 折叠后只留一条窄边：隐藏标题与列表，仅保留展开按钮。 */
+.lc-monitor-page .lw-monitor-grid.is-rooms-collapsed .lw-monitor-rooms .lw-panel__head {
+  justify-content: center;
+  padding: 7px var(--lc-space-2);
+}
+
+.lc-monitor-page .lw-monitor-grid.is-rooms-collapsed .lw-monitor-rooms .lw-panel__head > div:first-child,
+.lc-monitor-page .lw-monitor-grid.is-rooms-collapsed .lw-monitor-rooms .lw-panel__body {
+  display: none;
+}
+
+/* 无房间时整屏空态占据预览区高度 */
+.lc-monitor-center > .lc-monitor-empty {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* ── 未开播房间的预览占位（不挂播放器、不发 preview 请求）────── */
+
+.lc-monitor-page .lw-panel.lc-monitor-preview-placeholder {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  background: #0d0d0f;
+  border-color: #242426;
+  color: #f1f1ee;
+}
+
+.lc-monitor-page .lc-monitor-preview-placeholder .lw-panel__head {
+  flex: 0 0 auto;
+  background: #151516;
+  border-color: #242426;
+}
+
+.lc-monitor-page .lc-monitor-preview-placeholder .lw-panel__head h2 {
+  color: #f1f1ee;
+}
+
+.lc-monitor-page .lc-monitor-preview-placeholder .lw-panel__head > div:first-child > span {
+  color: #8f8f89;
+}
+
+.lc-monitor-preview-placeholder__stage {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lc-space-4);
+  min-height: 180px;
+  padding: 20px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: #050506;
+  color: #8f8f89;
+  text-align: center;
+}
+
+.lc-monitor-preview-placeholder__stage > svg {
+  color: #4a4a4e;
+}
+
+.lc-monitor-preview-placeholder__stage strong {
+  color: #e8e8e3;
+  font-size: var(--lc-text-md);
+  font-weight: 600;
+}
+
+.lc-monitor-preview-placeholder__stage span {
+  max-width: 440px;
+  font-size: var(--lc-text-fc-11-5);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* ── 房间卡片键盘序号 ─────────────────────────────────── */
+
+.lw-monitor-room__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--lc-radius-control);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1;
+}
+
+.lw-monitor-room.is-selected .lw-monitor-room__key {
+  border-color: var(--ink-blue);
+  color: var(--ink-blue);
+}
+
+.lw-monitor-room__top {
+  align-items: center;
+}
+
+.lw-monitor-room__top-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+/* ── 预览区固定深色观感 ───────────────────────────────── */
+
+.lc-monitor-page .lw-panel.lw-preview {
+  background: #0d0d0f;
+  border-color: #242426;
+  color: #f1f1ee;
+}
+
+.lc-monitor-page .lw-panel.lw-preview .lw-panel__head {
+  background: #151516;
+  border-color: #242426;
+}
+
+.lc-monitor-page .lw-panel.lw-preview .lw-panel__head h2 {
+  color: #f1f1ee;
+}
+
+.lc-monitor-page .lw-panel.lw-preview .lw-panel__head > div:first-child > span {
+  color: #8f8f89;
+}
+
+.lc-monitor-page .lw-preview__stage {
+  background: #050506;
+  color-scheme: dark;
+}
+
+.lc-monitor-page .lw-preview__status,
+.lc-monitor-page .lw-preview__proxy {
+  color: #8f8f89;
+}
+
+/* ── 顶部提示条（重连/切换提示）────────────────────────── */
+
+.lc-monitor-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  flex: 0 0 auto;
+  padding: 7px var(--lc-space-fc-10);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--lc-text-fc-11-5);
+  line-height: 1.45;
+}
+
+.lc-monitor-banner svg {
+  flex: 0 0 auto;
+}
+
+.lc-monitor-banner__text {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+}
+
+.lc-monitor-banner__action {
+  flex: 0 0 auto;
+}
+
+.lc-monitor-banner--error {
+  border-color: color-mix(in srgb, var(--ink-red) 40%, var(--line));
+  background: color-mix(in srgb, var(--ink-red) 8%, var(--surface));
+  color: var(--text);
+}
+
+.lc-monitor-banner--warn {
+  border-color: color-mix(in srgb, var(--ink-amber) 40%, var(--line));
+  background: color-mix(in srgb, var(--ink-amber) 9%, var(--surface));
+  color: var(--text);
+}
+
+/* ── 空态（无房间时整屏占位）──────────────────────────── */
+
+.lc-monitor-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lc-space-fc-10);
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--lc-space-8) 20px;
+  border: var(--lc-border-width) dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text-3);
+  text-align: center;
+}
+
+.lc-monitor-empty__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-3);
+}
+
+.lc-monitor-empty strong {
+  color: var(--text);
+  font-size: var(--lc-text-lg);
+  font-weight: 600;
+}
+
+.lc-monitor-empty span {
+  max-width: 420px;
+  font-size: var(--lc-text-sm);
+  line-height: 1.6;
+}
+
+/* ── 弹幕区重连提示 ───────────────────────────────────── */
+
+.lc-monitor-danmaku__reconnect {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  flex: 0 0 auto;
+  padding: 5px 7px;
+  border: var(--lc-border-width) solid color-mix(in srgb, var(--ink-amber) 36%, var(--line));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--ink-amber) 9%, var(--surface));
+  color: var(--text-2);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+/* ── 快捷键浮层 ───────────────────────────────────────── */
+
+.lc-monitor-help-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: color-mix(in srgb, var(--text) 32%, transparent);
+}
+
+.lc-monitor-help {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-5);
+  width: min(440px, 100%);
+  max-height: min(560px, 100%);
+  overflow: auto;
+  padding: var(--lc-space-fc-18) 20px var(--lc-space-6);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  color: var(--text);
+}
+
+.lc-monitor-help__head {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+}
+
+.lc-monitor-help__head strong {
+  flex: 1 1 auto;
+  font-size: var(--lc-text-lg);
+  font-weight: 600;
+}
+
+.lc-monitor-help__grid {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 7px var(--lc-space-fc-14);
+  margin: 0;
+  font-size: var(--lc-text-sm);
+}
+
+.lc-monitor-help__grid dt {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--lc-space-2);
+  margin: 0;
+  color: var(--text-3);
+}
+
+.lc-monitor-help__grid dd {
+  margin: 0;
+  color: var(--text-2);
+}
+
+.lc-monitor-help kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border: var(--lc-border-width) solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--lc-radius-control-lg);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+  line-height: 1;
+}
+
+.lc-monitor-help__note {
+  margin: 0;
+  color: var(--text-3);
+  font-size: var(--lc-text-xs);
+  line-height: 1.5;
+}
+
+/* 右下角常驻快捷键提示 */
+.lc-monitor-hint {
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  padding: 5px 9px;
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition:
+    color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease;
+}
+
+.lc-monitor-hint:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.lc-monitor-hint:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.lc-monitor-hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 var(--lc-space-2);
+  border: var(--lc-border-width) solid var(--line-strong);
+  border-radius: var(--lc-radius-control);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* ── 响应式 ───────────────────────────────────────────── */
+
+@media (max-width: 1440px) {
+  .lc-monitor-main .lw-monitor-grid {
+    grid-template-columns: 236px minmax(0, 1fr) 312px;
+  }
+
+  .lc-monitor-main .lw-monitor-grid.is-rooms-collapsed {
+    grid-template-columns: 46px minmax(0, 1fr) 312px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .lc-monitor-toolbar__time {
+    display: none;
+  }
+
+  .lc-monitor-main .lw-monitor-grid {
+    grid-template-columns: 218px minmax(0, 1fr) 286px;
+  }
+
+  .lc-monitor-main .lw-monitor-grid.is-rooms-collapsed {
+    grid-template-columns: 46px minmax(0, 1fr) 286px;
+  }
+}
+
+@media (max-width: 1120px) {
+  .lc-monitor-toolbar {
+    gap: var(--lc-space-3);
+    padding: 0 var(--lc-space-4);
+  }
+
+  .lc-monitor-toolbar__room span {
+    display: none;
+  }
+
+  .lc-monitor-main {
+    padding: var(--lc-space-3) var(--lc-space-4) var(--lc-space-4);
+  }
+
+  .lc-monitor-main .lw-monitor-grid {
+    grid-template-columns: 190px minmax(0, 1fr) 250px;
+    gap: var(--lc-space-4);
+  }
+
+  .lc-monitor-main .lw-monitor-grid.is-rooms-collapsed {
+    grid-template-columns: 46px minmax(0, 1fr) 250px;
+  }
+
+  .lc-monitor-hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-monitor-toolbar__back,
+  .lc-monitor-hint {
+    transition: none;
+  }
+}
+
+/* Keep the selected-room title and controls on separate rows at every width. */
+.lc-monitor-page .lw-monitor-status > .lw-panel__head {
+  flex-direction: column;
+  align-items: stretch;
+}
+.lc-monitor-page .lw-monitor-status > .lw-panel__head > div:first-child > span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.lc-monitor-page .lw-monitor-status__badges {
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 1 auto;
+  justify-content: flex-start;
+}
+.lc-monitor-page .lw-monitor-status__badges .lw-recording-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lc-space-2);
+  padding-block: 0;
+}
+.lc-monitor-page .lw-monitor-status__badges :is(.live-btn,.lw-badge) {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.lc-monitor-page .lw-monitor-room__heat-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.lc-monitor-page .lw-monitor-room__heat-row > .lw-bar { flex: 1 1 auto; min-width: 0; }
+.lc-monitor-page .lw-monitor-room__heat-label { flex: 0 0 auto; font-size: 10px; color: var(--text-2); white-space: nowrap; }
+
+.lc-monitor-page .lw-bar.is-baseline > i { background: var(--ink-green); }
+.lc-monitor-page .lw-bar.is-display-line > i { background: var(--ink-amber); }
+.lc-monitor-page .lw-bar.is-below-baseline > i { background: var(--text-3); }
+.lc-monitor-page .lw-monitor-status__heat-head > strong.is-baseline { color: var(--ink-green); }
+.lc-monitor-page .lw-monitor-status__heat-head > strong.is-display-line { color: var(--ink-amber); }
+.lc-monitor-page .lw-monitor-status__heat-head > strong.is-unbased { color: var(--text-3); font-size: 12px; }
+
+/* The preview has intrinsic height; details scroll instead of squeezing video. */
+.lc-monitor-page .lw-monitor-center { overflow-y: auto; overflow-x: hidden; }
+.lc-monitor-page .lw-monitor-center .lw-panel.lw-preview { flex: 0 0 auto; min-height: auto; }
+.lc-monitor-page .lw-monitor-center .lw-preview__stage {
+  flex: 0 0 auto;
+  width: 100%;
+  height: auto;
+  min-height: 220px;
+  aspect-ratio: 16 / 9;
+}
+.lc-monitor-page .lw-monitor-center .lw-preview__stage:fullscreen { height: 100vh; aspect-ratio: auto; }
+@media (max-width: 1120px) {
+  .lc-monitor-page .lc-monitor-main { overflow-y: auto; overflow-x: hidden; }
+  .lc-monitor-main .lw-monitor-grid { flex: 0 0 auto; overflow: visible; grid-template-columns: 190px minmax(0, 1fr); grid-template-rows: auto auto; align-items: start; }
+  .lc-monitor-main .lw-monitor-grid.is-rooms-collapsed { grid-template-columns: 46px minmax(0, 1fr); }
+  .lc-monitor-page .lw-monitor-rooms { grid-column: 1; grid-row: 1 / 3; max-height: calc(100dvh - 90px); }
+  .lc-monitor-page .lw-monitor-center { grid-column: 2; grid-row: 1; overflow: visible; }
+  .lc-monitor-page .lw-monitor-danmaku { grid-column: 2; grid-row: 2; max-height: 420px; min-height: 240px; }
+}
+@media (max-width: 700px) {
+  .lc-monitor-main .lw-monitor-grid,
+  .lc-monitor-main .lw-monitor-grid.is-rooms-collapsed { grid-template-columns: minmax(0, 1fr); }
+  .lc-monitor-page .lw-monitor-rooms { grid-column: 1; grid-row: 1; max-height: 320px; }
+  .lc-monitor-page .lw-monitor-center { grid-column: 1; grid-row: 2; }
+  .lc-monitor-page .lw-monitor-danmaku { grid-column: 1; grid-row: 3; }
+}

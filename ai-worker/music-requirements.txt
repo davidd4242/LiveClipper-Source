@@ -1,0 +1,6 @@
+# Optional local music generation runtime.
+# The worker installs these into an app-owned virtual environment on first use.
+huggingface_hub
+numpy
+torch
+transformers

@@ -1,0 +1,170 @@
+/**
+ * R81 外壳样式：全部选择器以 `.editor-next-shell` 开头。
+ *
+ * 只做两件事：
+ * 1. 给外壳自己排版（48px 顶栏、面包屑、保存态、skip link）；
+ * 2. 把 r65/r72 里按「页面就是视口」写死的高度/固定偏移在**本表内**抵消，
+ *    不改 r65/r72/r79（那三个表同时被 HOSTBAR/PANELS 改）。
+ * 颜色一律走 design token，不写字面量色值。
+ */
+.editor-next-shell {
+  /* 顶栏高度：抽屉/浮层的固定偏移要以它为基准。 */
+  --r81-shell-top: 48px;
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--lc-chrome);
+  color: var(--lc-text-primary);
+  color-scheme: dark;
+  font: inherit;
+}
+
+/* 键盘用户跳过后面的图标栏与顶栏，直接进编辑区。 */
+.editor-next-shell__skip {
+  position: absolute;
+  inset-inline-start: 8px;
+  inset-block-start: 8px;
+  z-index: var(--lc-z-toast);
+  padding: 8px 12px;
+  border: var(--lc-border-width) solid var(--lc-accent-line);
+  border-radius: var(--lc-radius-control-lg);
+  background: var(--lc-surface-raised);
+  color: var(--lc-text-primary);
+  font: inherit;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 120ms ease-out;
+}
+.editor-next-shell__skip:focus-visible {
+  transform: none;
+  outline: var(--ring-width, 2px) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+
+.editor-next-shell__bar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  height: var(--r81-shell-top);
+  min-width: 0;
+  padding: 0 12px 0 8px;
+  border-bottom: var(--lc-border-width) solid var(--lc-line);
+  background: var(--lc-chrome);
+  color: var(--lc-text-primary);
+}
+
+/* 返回 / 面包屑首段：共用一套 44px 命中区。 */
+.editor-next-shell__back,
+.editor-next-shell__crumb {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 8px;
+  appearance: none;
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--lc-radius-control-lg);
+  background: transparent;
+  color: var(--lc-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+.editor-next-shell__back:hover,
+.editor-next-shell__crumb:hover {
+  background: var(--lc-surface-hover);
+  border-color: var(--lc-accent-line);
+}
+.editor-next-shell__back:focus-visible,
+.editor-next-shell__crumb:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+
+.editor-next-shell__crumbs {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.editor-next-shell__sep {
+  flex: 0 0 auto;
+  color: var(--lc-text-faint);
+}
+
+.editor-next-shell__crumb-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 2px;
+  color: var(--lc-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.editor-next-shell__crumb-text[aria-current='page'] {
+  color: var(--lc-text-primary);
+}
+
+.editor-next-shell__save {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--lc-text-secondary);
+  font: inherit;
+  white-space: nowrap;
+}
+
+.editor-next-shell__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lc-success);
+}
+.editor-next-shell__save[data-save-status='unsaved'] .editor-next-shell__dot { background: var(--lc-warning); }
+.editor-next-shell__save[data-save-status='saving'] .editor-next-shell__dot { background: var(--lc-accent-line); }
+.editor-next-shell__save[data-save-status='conflict'] .editor-next-shell__dot,
+.editor-next-shell__save[data-save-status='error'] .editor-next-shell__dot { background: var(--lc-danger); }
+
+.editor-next-shell__body {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* r65 给页面写了 height:100dvh；在外壳里改成吃满剩余高度。 */
+.editor-next-shell .editor-next-page {
+  flex: 1 1 0;
+  height: auto;
+  min-height: 0;
+}
+
+/* r72 的抽屉按「视口顶端 44px」固定定位，外壳顶栏要一起算进去。 */
+.editor-next-shell .editor-next-page > .editor-next-drawer {
+  inset-block-start: calc(var(--r81-shell-top) + 44px);
+  height: calc(100dvh - var(--r81-shell-top) - 44px);
+  max-height: calc(100dvh - var(--r81-shell-top) - 44px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-next-shell__skip {
+    transition: none;
+  }
+}

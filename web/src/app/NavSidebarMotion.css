@@ -1,0 +1,19 @@
+/* 宽侧栏裁切槽：自身占布局宽度，内容在槽内平移，不产生覆盖层。 */
+.lc-nav-slot {
+  display: flex;
+  flex: none;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lc-nav-slot__body {
+  display: flex;
+  flex: none;
+  min-height: 0;
+}
+
+@media (max-width: 960px) {
+  .lc-nav-slot {
+    display: none;
+  }
+}

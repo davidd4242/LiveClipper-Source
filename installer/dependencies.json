@@ -1,0 +1,35 @@
+{
+  "desktop": {
+    "name": "windowsdesktop-runtime-win-x64.zip",
+    "rid": "win-x64",
+    "url": "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.12/windowsdesktop-runtime-10.0.12-win-x64.zip",
+    "hash": "8b79f679c348aa08a10ee4e1ca75be54b135ae951b7328400fea8499f9eb8450ccb18f9f708af6182b2bcd88fcca719aa282939e907b017422f519de8dd42534"
+  },
+  "aspnet": {
+    "name": "aspnetcore-runtime-win-x64.zip",
+    "rid": "win-x64",
+    "url": "https://builds.dotnet.microsoft.com/dotnet/aspnetcore/Runtime/10.0.12/aspnetcore-runtime-10.0.12-win-x64.zip",
+    "hash": "b6958736bd42eff9c78a27a489d43eb0a39c6201039070ecb76a93cb96c519f07c86fa8b62034c6dd1a82a4c8ad0bd781e052008a7ec4cc48f9f792227d9c7ac"
+  },
+  "webview": {
+    "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/621dd012-b3d6-4b8b-a6b7-fc3938bfe9d4/Microsoft.WebView2.FixedVersionRuntime.154.0.4258.48.x64.cab",
+    "hash": "E2356456A8F02E606A731CD7646A604ED3676A9E392BD867B0207A8C3DC2D4F4"
+  },
+  "dotnetVersion": "10.0.12",
+  "ollama": {
+    "hash": "d6f7d3dd4f5d013553a78c1e78b2521fcf41d43dd2863e4596cdc046fe6036db",
+    "url": "https://github.com/ollama/ollama/releases/download/v0.35.0/ollama-windows-amd64.zip"
+  },
+  "vc": {
+    "hash": "CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B",
+    "url": "https://download.visualstudio.microsoft.com/download/pr/bd1c8d9d-ba95-4eee-bc6e-df1fcc876373/CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B/VC_redist.x64.exe"
+  },
+  "uv": {
+    "url": "https://github.com/astral-sh/uv/releases/download/0.12.21/uv-x86_64-pc-windows-msvc.zip",
+    "hash": "5d223efa0bf00208c3853246af09420419dfbd352536aa6bb8163d6170e23890"
+  },
+  "ffmpeg": {
+    "url": "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip",
+    "hash": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba"
+  }
+}

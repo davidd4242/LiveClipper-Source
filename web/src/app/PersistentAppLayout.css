@@ -1,0 +1,95 @@
+/* 持久外壳：基础布局沿用 AppShell.css 的 .lc-app-shell / .lc-app-shell__main。 */
+
+.lc-persistent-layout {
+  width: 100%;
+}
+
+/* editor / monitor 整屏：不套 AppShell 的 640px 最小高度。 */
+.lc-persistent-layout--editor,
+.lc-persistent-layout--monitor {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+}
+
+/* 64px 图标栏 + editor 状态出口；压在浮窗层之上（同 RailFrame / FilmCraftAppNav）。 */
+.lc-persistent-layout__rail {
+  position: relative;
+  z-index: 260;
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 64px;
+  flex-direction: column;
+  width: 64px; /* 固定 IconRail 宽度合同；error/hint 不得按 intrinsic 撑宽 rail */
+  min-width: 0;
+  min-height: 0;
+}
+
+.lc-persistent-layout__rail > .lc-icon-rail {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.lc-persistent-layout__hint,
+.lc-persistent-layout__error {
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 30%;
+  margin: 0;
+  padding: 8px 6px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  border-right: var(--lc-border-width) solid var(--line);
+  background: var(--surface);
+  font: 12px/1.4 var(--font-sans);
+}
+
+.lc-persistent-layout__hint {
+  color: var(--text-3);
+}
+
+/* 空闲时只给读屏，不占位。 */
+.lc-persistent-layout__hint[data-busy="false"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.lc-persistent-layout__error {
+  color: var(--lc-danger-text, #d23f4f);
+}
+
+/* monitor：无导航，DOM 保留但不显示（避免模式切换重挂 rail / 侧栏）。 */
+.lc-persistent-layout--monitor > .lc-persistent-layout__rail,
+.lc-persistent-layout--monitor > .lc-nav-slot,
+.lc-persistent-layout--monitor > .lc-skip-link {
+  display: none;
+}
+
+.lc-persistent-layout__main {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+/*
+ * editor 右侧槽：从 filmcraft-host-actions.css 复制必要规则。该文件随 editor lazy chunk 才加载，
+ * 持久外壳首屏必须自带，否则切入编辑器前槽内布局塌掉。
+ * 画布宽度裁切修正（.fc-editor-motion > .lc-page-slide-motion__content）已在 PageSlideMotion.css，不重复。
+ */
+.lc-persistent-layout--editor > .fc-editor-motion {
+  flex: 1 1 0;
+  width: 0;
+  height: 100%;
+}
+
+.lc-persistent-layout--editor > .fc-editor-motion > .lc-page-slide-motion__content {
+  flex-direction: row;
+  height: 100%;
+}

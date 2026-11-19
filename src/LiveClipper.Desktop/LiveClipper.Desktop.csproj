@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <Version>1.3.1</Version><InformationalVersion>1.3.1</InformationalVersion>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>..\..\assets\liveclipper.ico</ApplicationIcon>
+    <RollForward>Major</RollForward>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="..\..\assets\liveclipper.ico" Link="Assets\liveclipper.ico" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3537.50" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.15" />
+    <ProjectReference Include="..\\LiveClipper.App\\LiveClipper.App.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('..\..\web\dist')">
+    <Content Include="..\..\web\dist\**\*" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('..\..\filmcraft-preview\wwwroot')">
+    <Content Include="..\..\filmcraft-preview\wwwroot\**\*" Link="wwwroot\filmcraft\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!--
+    进程内宿主只需要 LiveClipper.App.dll；App 的 apphost 是旧“独立服务进程”入口，
+    留在发布目录会让人误以为还可以 spawn，也违反单进程交付。
+  -->
+  <Target Name="RemoveStandaloneServerAppHost" AfterTargets="Build">
+    <Delete Files="$(OutputPath)LiveClipper.App.exe" />
+  </Target>
+  <Target Name="RemoveStandaloneServerAppHostPublish" AfterTargets="Publish">
+    <Delete Files="$(PublishDir)LiveClipper.App.exe" />
+  </Target>
+
+</Project>

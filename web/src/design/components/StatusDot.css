@@ -1,0 +1,70 @@
+.lc-dot {
+  box-sizing: border-box;
+  display: inline-block;
+  flex: none;
+  border-radius: 50%;
+  background: var(--text-3);
+  color: var(--text-3);
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.lc-dot--sm {
+  width: 7px;
+  height: 7px;
+  box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.lc-dot--md {
+  width: 9px;
+  height: 9px;
+}
+
+.lc-dot--green {
+  background: var(--dot-green);
+  color: var(--dot-green);
+}
+
+.lc-dot--blue {
+  background: var(--dot-blue);
+  color: var(--dot-blue);
+}
+
+.lc-dot--purple {
+  background: var(--dot-purple);
+  color: var(--dot-purple);
+}
+
+.lc-dot--red {
+  background: var(--dot-red);
+  color: var(--dot-red);
+}
+
+.lc-dot--amber {
+  background: var(--dot-amber);
+  color: var(--dot-amber);
+}
+
+.lc-dot--idle {
+  background: var(--text-3);
+  color: var(--text-3);
+}
+
+.lc-dot--pulse {
+  animation: lc-dot-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes lc-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-dot--pulse {
+    animation: none;
+  }
+}

@@ -1,0 +1,290 @@
+/*
+ * LiveClipper Studio — Editor design tokens
+ * Direction: Premiere-inspired editorial workspace, LiveClipper-specific.
+ * Dark theme tokens.
+ *
+ * These values are the canonical implementation source. Do not hard-code
+ * colors, typography sizes, panel heights or motion durations in components.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Surfaces ───────────────────────────────────────────── */
+  --lc-bg-root: #0b0b0b;
+  --lc-chrome: #141414;
+  --lc-surface: #232323;
+  --lc-surface-sunken: #1d1d1d;
+  --lc-surface-raised: #2a2a2a;
+  --lc-surface-panel-head: #1b1b1b;
+  --lc-surface-input: #181818;
+  --lc-surface-selected: #243342;
+  --lc-surface-hover: #2a2a2a;
+
+  /* ── Lines and separation ───────────────────────────────── */
+  --lc-line-strong: #0a0a0a;
+  --lc-line: #4a4a4a;
+  --lc-line-soft: #383838;
+  --lc-line-inset: #111111;
+
+  /* ── 兼容别名（临时，迁移完就删）────────────────────────────
+     web/src 里有 29 处写过 var(--lc-border) / var(--lc-border-soft) /
+     var(--lc-border-strong)，这三个名字**历史上从未定义**，导致那些
+     `border: 1px solid var(--lc-border)` 整条声明失效（描边根本没画出来）。
+     先映射到真实的分隔线色止血；U1 把使用点改成真名后，这三行必须删除。 */
+  --lc-border: var(--lc-line);
+  --lc-border-soft: var(--lc-line-soft);
+  --lc-border-strong: var(--lc-line-strong);
+
+  /* 同一类问题的其余 11 个旧名（扫出来总共 12 个悬空名、60 处引用）。
+     它们都只有引用、没有定义，导致对应声明静默失效。先逐条映射到真实令牌，
+     U1 迁移使用点后整块删除。映射依据写在行尾，别猜。 */
+  --lc-bg: var(--lc-bg-root);            /* 背景底 → 根背景 */
+  --lc-bg-raised: var(--lc-surface-raised);
+  --lc-bg-input: var(--lc-surface-input);
+  --lc-hover: var(--lc-surface-hover);   /* 悬停底色 */
+  --lc-surface-active: var(--lc-surface-selected); /* 激活/选中底 */
+  --lc-panel-2: var(--lc-surface-raised); /* 二级面板底 */
+  --lc-text: var(--lc-text-primary);     /* 正文 */
+  --lc-text-dim: var(--lc-text-faint);   /* 更弱的次要信息（27 处，最常用） */
+  --lc-focus: var(--lc-focus-ring);      /* 焦点环（outline 用） */
+  --lc-accent-text: var(--lc-accent-line); /* 强调色文字，取偏亮的那档 */
+  --lc-danger-soft: var(--lc-danger-surface);
+  --lc-warning-text: var(--lc-warning);
+
+  /* ── Text ───────────────────────────────────────────────── */
+  --lc-text-primary: #e6e6e6;
+  --lc-text-strong: #ffffff;
+  --lc-text-secondary: #c6c6c6;
+  --lc-text-muted: #a6a6a6;
+  --lc-text-faint: #8a8a8a;
+  --lc-text-inverse: #ffffff;
+
+  /* ── Interaction ────────────────────────────────────────── */
+  --lc-accent: #2e8ff0;
+  --lc-accent-hover: #5aa9f7;
+  --lc-accent-pressed: #2478c9;
+  --lc-accent-soft: rgba(46, 143, 240, 0.18);
+  --lc-accent-line: #78b9ff;
+  --lc-focus-ring: #78b9ff;
+  /* P1.7u（U7）：焦点环的宽度与偏移也纳入令牌，避免 18 处 outline 各写 2px。 */
+  --lc-focus-ring-width: 2px;
+  --lc-focus-ring-offset: 2px;
+  --lc-focus-offset: 1px;
+  /* 密排行内（列表行、缩略图、页签）用 1px 紧贴环，避免 2px 在 22px 行高里互相咬边。 */
+  --lc-focus-ring-width-tight: 1px;
+  --lc-selection-border: #3f6f96;
+  /* Repeated white foreground on host accent buttons and menu selections. */
+  --lc-control-on-accent: #ffffff;
+  /* Same host surface for neutral actions and disabled accent actions. */
+  --lc-control-surface-neutral: #2b2b2b;
+  /* Live/healthy status foreground retained from the host status family. */
+  --lc-status-positive-text: #7fd18f;
+
+  /* ── Semantic ───────────────────────────────────────────── */
+  --lc-live: #d3914d;          /* live / recording only; never the primary CTA */
+  --lc-success: #5ba361;
+  --lc-success-text: #a5d4aa;
+  --lc-success-surface: #26392a;
+  --lc-warning: #d4b44b;
+  --lc-warning-surface: #322c20;
+  --lc-danger: #d95a58;
+  --lc-danger-surface: #3a2424;
+
+  /* ── Timeline materials ─────────────────────────────────── */
+  --lc-track-video-a: #2d6b66;
+  --lc-track-video-b: #3f5b78;
+  --lc-track-video-c: #52645a;
+  --lc-track-audio: #2e5d48;
+  --lc-track-music: #395444;
+  --lc-track-title: #8e6433;
+  --lc-track-waveform: #8bc7a1;
+  --lc-track-playhead: #7ec2ff;
+  --lc-track-marker: #d4b44b;
+
+  /* ── Typography ─────────────────────────────────────────── */
+  --lc-font-ui: "Segoe UI Variable", "Segoe UI", "Microsoft YaHei UI", sans-serif;
+  --lc-font-mono: "Cascadia Mono", "Consolas", "SFMono-Regular", monospace;
+  --lc-text-2xs: 10px;
+  --lc-text-xs: 11px;
+  --lc-text-sm: 12px;
+  --lc-text-md: 13px;
+  --lc-text-lg: 14px;
+  --lc-text-title: 29px;
+  --lc-weight-regular: 400;
+  --lc-weight-medium: 500;
+  --lc-weight-semibold: 600;
+  --lc-weight-bold: 700;
+  --lc-leading-tight: 1.2;
+  --lc-leading-body: 1.5;
+
+  /* ── Spacing: 2px base grid ─────────────────────────────── */
+  --lc-space-1: 2px;
+  --lc-space-2: 4px;
+  --lc-space-3: 6px;
+  --lc-space-4: 8px;
+  --lc-space-5: 12px;
+  --lc-space-6: 16px;
+  --lc-space-7: 24px;
+  --lc-space-8: 32px;   /* P1.7u U1：补齐 8 档刻度（2/4/6/8/12/16/24/32）。
+                         * 刻度先定死再归值，禁止为单个组件新增精确间距令牌。 */
+
+  /* ── Shape ──────────────────────────────────────────────── */
+  /* P1.7u U1：圆角刻度取 FilmCraft 实测出现的 0/2/3/4/8（S1 `spike-visual-constants.md`
+   * 「4档公共圆角」），把 3 归到 4（差 1px 不改变视觉层级）。`--lc-radius-sm:1px` 是宿主
+   * 既有值，保留给尚未迁移的调用点，U2 迁移完成后删。 */
+  --lc-radius-none: 0;
+  --lc-radius-hair: 1px;
+  --lc-radius-xs: 2px;
+  --lc-radius-sm: 1px;   /* 过渡值，U2 后淘汰 */
+  --lc-radius-md: 2px;   /* 保持宿主现值 2px。FilmCraft 的 3/4px 属同一层级，但把 md 抬到 4px
+                          * 会一次性改动所有调用点——那是 U2 逐处迁移 + 逐屏 diff 的事，不在 U1 做。 */
+  --lc-radius-lg: 8px;
+  /* U2-a: retain the repeated host control radii; density changes need screen diffs. */
+  --lc-radius-control: 3px;
+  --lc-radius-control-lg: 4px;
+  --lc-radius-round: 999px;
+  --lc-border-width: 1px;
+
+  /* ── Layout — baseline 1440 × 900 ───────────────────────── */
+  /* C5 裁决（2026-10-26）：本文件是布局数值的唯一事实源；
+   * design/ui/README.md §3 只引用 token 名，不再重复数值。
+   * FilmCraft 原生轨道（crates/ui-egui/src/state.rs:220-231）视频 60px / 音频 56px，
+   * LC 为 6 轨同屏压到 26px，属有意偏差（见 README 偏差说明）。 */
+  --lc-menubar-height: 34px;          /* FilmCraft: 无固定 token；LC 单行菜单 34px（C1，原 30px 作废） */
+  --lc-statusbar-height: 26px;        /* FilmCraft: 状态栏随 UI scale；LC 固定 26px（C2，原 23px 作废） */
+  --lc-panel-head-height: 32px;       /* FilmCraft: 面板头随主题；LC 32px，信息密度优先 */
+  --lc-panel-gap: 2px;                /* FilmCraft: 面板间以线分隔；LC 2px 背景缝 */
+  --lc-project-width: 260px;          /* FilmCraft: 项目面板可拖宽；LC 默认 260px（C3，原 236px 作废） */
+  --lc-audio-width: 220px;            /* FilmCraft: 音频区可拖宽；LC 默认 220px（C4，原 188px 作废） */
+  --lc-bottom-panel-height: clamp(240px, 32vh, 296px); /* FilmCraft: 时间线高度随窗口；LC 下限 240px 保证 6 轨同屏 */
+  --lc-timeline-track-height: 26px;   /* FilmCraft: 视频轨 60 / 音频轨 56；LC 压到 26px 换 6 轨同屏（C5 有意偏差） */
+  --lc-timeline-head-width: 112px;    /* FilmCraft: 轨道头参考值 104/204；LC 取 112px（C6，tokens 权威） */
+  --lc-toolrail-width: 44px;          /* FilmCraft: 工具面板 64px / 按钮 32px；LC 单列 44px 紧凑工具轨 */
+  --lc-ai-rail-width: 38px;           /* FilmCraft: 无常驻 AI 轨；LC 自定义 38px（C7，tokens 权威） */
+  --lc-ai-drawer-width: 370px;        /* FilmCraft: 无对应抽屉；LC 370px（C7） */
+  --lc-ai-drawer-min-width: 340px;    /* FilmCraft: 无对应抽屉；LC 最小 340px（C7） */
+
+  /* ── Motion ─────────────────────────────────────────────── */
+  --lc-motion-fast: 120ms;
+  --lc-motion-panel: 220ms;
+  --lc-ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --lc-shadow-drawer: -16px 0 34px rgba(0, 0, 0, 0.42);
+
+  /* ── Z-index ladder ─────────────────────────────────────── */
+  --lc-z-panel: 1;
+  --lc-z-drawer: 30;
+  --lc-z-rail: 31;
+  --lc-z-popover: 50;
+  --lc-z-modal: 80;
+  --lc-z-toast: 90;
+  /* R51-D: wide focus offset (workspaceP1b.css); its own value, not a multiple of --lc-focus-offset. */
+  --lc-focus-offset-wide: 3px;
+}
+
+/* Clip materials stay dark in both shell themes; retain the host's exact fills. */
+:root,
+:root[data-theme="dark"] {
+  --tl-clip-border: rgba(0, 0, 0, 0.7);
+  --tl-clip-text: rgba(255, 255, 255, 0.92);
+  --tl-clip-video-a-fill: linear-gradient(135deg, #2d6b66, #2f8075);
+  --tl-clip-video-a-border: var(--tl-clip-border);
+  --tl-clip-video-a-text: var(--tl-clip-text);
+  --tl-clip-video-b-fill: linear-gradient(135deg, #3f5b78, #436b8c);
+  --tl-clip-video-b-border: var(--tl-clip-border);
+  --tl-clip-video-b-text: var(--tl-clip-text);
+  --tl-clip-video-c-fill: linear-gradient(135deg, #52645a, #496d4f);
+  --tl-clip-video-c-border: var(--tl-clip-border);
+  --tl-clip-video-c-text: var(--tl-clip-text);
+  --tl-clip-audio-fill: linear-gradient(180deg, #2e5d48, #28513f);
+  --tl-clip-audio-border: #152f24;
+  --tl-clip-audio-text: var(--tl-clip-text);
+  --tl-clip-music-fill: linear-gradient(180deg, #395444, #2c4739);
+  --tl-clip-music-border: #152f24;
+  --tl-clip-music-text: var(--tl-clip-text);
+  --tl-clip-title-fill: linear-gradient(135deg, #8e6433, #a7793d);
+  --tl-clip-title-border: #5a3c1f;
+  --tl-clip-title-text: var(--tl-clip-text);
+  --tl-clip-track-v2-fill: linear-gradient(135deg, #55417a, #73559d);
+  --tl-clip-track-v3-fill: linear-gradient(135deg, #7a5427, #9b7038);
+  --tl-clip-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --tl-clip-top-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --tl-clip-disabled-fill: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0 4px, transparent 4px 9px);
+  --tl-clip-selected-outline: 1px solid var(--lc-accent-line);
+  --tl-clip-selected-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(46, 143, 240, 0.5);
+  --tl-clip-linked-shadow: inset 0 0 0 1px rgba(120, 220, 255, 0.5), 0 0 0 1px rgba(70, 170, 230, 0.35);
+  --tl-clip-link-text: rgba(190, 235, 255, 0.9);
+  --tl-clip-handle-border: rgba(255, 255, 255, 0.4);
+  --tl-clip-nested-badge-fill: rgba(46, 143, 240, 0.22);
+  --tl-clip-nested-badge-text: var(--lc-accent-hover);
+  --tl-clip-trim-fill: rgba(120, 185, 255, 0.2);
+  /* R51-D: timelineSkin.css clip-type skin; same values in both themes (the timeline canvas stays dark). */
+  --tl-skin-clip-video-a-border: #3f6f6a;
+  --tl-skin-clip-video-a-fill: linear-gradient(180deg, #2f615b 0%, #28514d 100%);
+  --tl-skin-clip-video-b-border: #4a6386;
+  --tl-skin-clip-video-b-fill: linear-gradient(180deg, #3a5272 0%, #324762 100%);
+  --tl-skin-clip-video-c-border: #5c6f63;
+  --tl-skin-clip-video-c-fill: linear-gradient(180deg, #4b5e53 0%, #3f5047 100%);
+  --tl-skin-clip-audio-border: #3d6b55;
+  --tl-skin-clip-audio-fill: linear-gradient(180deg, #2f5544 0%, #284737 100%);
+}
+
+:root[data-theme="light"] {
+  --tl-clip-trim-fill: rgba(120, 185, 255, 0.2);
+  --tl-clip-border: rgba(0, 0, 0, 0.7);
+  --tl-clip-text: rgba(255, 255, 255, 0.92);
+  --tl-clip-video-a-fill: linear-gradient(135deg, #2d6b66, #2f8075);
+  --tl-clip-video-a-border: var(--tl-clip-border);
+  --tl-clip-video-a-text: var(--tl-clip-text);
+  --tl-clip-video-b-fill: linear-gradient(135deg, #3f5b78, #436b8c);
+  --tl-clip-video-b-border: var(--tl-clip-border);
+  --tl-clip-video-b-text: var(--tl-clip-text);
+  --tl-clip-video-c-fill: linear-gradient(135deg, #52645a, #496d4f);
+  --tl-clip-video-c-border: var(--tl-clip-border);
+  --tl-clip-video-c-text: var(--tl-clip-text);
+  --tl-clip-audio-fill: linear-gradient(180deg, #2e5d48, #28513f);
+  --tl-clip-audio-border: #152f24;
+  --tl-clip-audio-text: var(--tl-clip-text);
+  --tl-clip-music-fill: linear-gradient(180deg, #395444, #2c4739);
+  --tl-clip-music-border: #152f24;
+  --tl-clip-music-text: var(--tl-clip-text);
+  --tl-clip-title-fill: linear-gradient(135deg, #8e6433, #a7793d);
+  --tl-clip-title-border: #5a3c1f;
+  --tl-clip-title-text: var(--tl-clip-text);
+  --tl-clip-track-v2-fill: linear-gradient(135deg, #55417a, #73559d);
+  --tl-clip-track-v3-fill: linear-gradient(135deg, #7a5427, #9b7038);
+  --tl-clip-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --tl-clip-top-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --tl-clip-disabled-fill: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0 4px, transparent 4px 9px);
+  --tl-clip-selected-outline: 1px solid var(--lc-accent-line);
+  --tl-clip-selected-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(46, 143, 240, 0.5);
+  --tl-clip-linked-shadow: inset 0 0 0 1px rgba(120, 220, 255, 0.5), 0 0 0 1px rgba(70, 170, 230, 0.35);
+  --tl-clip-link-text: rgba(190, 235, 255, 0.9);
+  --tl-clip-handle-border: rgba(255, 255, 255, 0.4);
+  --tl-clip-nested-badge-fill: rgba(46, 143, 240, 0.22);
+  --tl-clip-nested-badge-text: var(--lc-accent-hover);
+  /* R51-D: same clip-type skin values as the dark block (the timeline canvas stays dark in both themes). */
+  --tl-skin-clip-video-a-border: #3f6f6a;
+  --tl-skin-clip-video-a-fill: linear-gradient(180deg, #2f615b 0%, #28514d 100%);
+  --tl-skin-clip-video-b-border: #4a6386;
+  --tl-skin-clip-video-b-fill: linear-gradient(180deg, #3a5272 0%, #324762 100%);
+  --tl-skin-clip-video-c-border: #5c6f63;
+  --tl-skin-clip-video-c-fill: linear-gradient(180deg, #4b5e53 0%, #3f5047 100%);
+  --tl-skin-clip-audio-border: #3d6b55;
+  --tl-skin-clip-audio-fill: linear-gradient(180deg, #2f5544 0%, #284737 100%);
+}
+
+/* R51-FX2: opaque disabled ink; panel contrast stays >= 3:1 without fading the control. */
+:root {
+  --lc-text-disabled: #757575;
+}
+
+/* R52-T0b: FilmCraft-sampled off-scale values as identical-value tokens (zero visual change, NOT snapped
+   to the 2/4/6/8/12/16/24/32 scale). Provenance: docs/merge/p17u/_probe/s1/constants.json spacing[] /
+   typography[] entries with the same value; each used by >=3 files in web/src/app + web/src/design/components. */
+:root {
+  --lc-space-fc-10: 10px;   /* constants.json spacing "10px" (app.css:111, app.css:165) */
+  --lc-space-fc-14: 14px;   /* constants.json spacing "14px" (app.css:123, app.css:184) */
+  --lc-space-fc-18: 18px;   /* constants.json spacing "18px" (app.css:171, app.css:311) */
+  --lc-text-fc-11-5: 11.5px; /* constants.json typography "11.5px" (app.css:160, app.css:169) */
+}

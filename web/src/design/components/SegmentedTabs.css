@@ -1,0 +1,76 @@
+.lc-segmented {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-1);
+  padding: 3px;
+  border: var(--lc-border-width) solid var(--control-border);
+  border-radius: 11px;
+  background: var(--surface);
+}
+
+.lc-segmented__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: var(--lc-radius-lg);
+  background: transparent;
+  color: var(--text-3);
+  font-family: var(--font-sans);
+  font-size: var(--lc-text-md);
+  font-weight: var(--lc-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+}
+
+.lc-segmented--sm .lc-segmented__item {
+  height: 28px;
+  padding: 0 var(--lc-space-fc-10);
+  font-size: var(--lc-text-sm);
+}
+
+.lc-segmented__item:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.lc-segmented__item:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: var(--ring-offset);
+}
+
+.lc-segmented__item:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.lc-segmented__item:disabled {
+  opacity: var(--disabled-opacity);
+  cursor: not-allowed;
+}
+
+.lc-segmented__item.is-active {
+  background: var(--surface-inverse);
+  color: var(--bg);
+}
+
+/* 计数直接继承 item 前景色，不再叠 opacity（否则小字达不到 4.5:1） */
+.lc-segmented__count {
+  font-size: var(--lc-text-fc-11-5);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-segmented__item {
+    transition: none;
+  }
+
+  .lc-segmented__item:not(:disabled):active {
+    transform: none;
+  }
+}

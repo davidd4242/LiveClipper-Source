@@ -1,0 +1,360 @@
+/* ── A4 独立监控屏（/live/monitor） ───────────────────────
+ * 三列：房间列表 / 预览 + 热度切片 / 弹幕窗口。
+ * 复用 app.css 的 .lw-* 原子与 live.css 的 .live-btn / .live-brand。
+ */
+
+/* AX 语义辅助（task-76）：视觉隐藏的页面 h1；footer 只提供 contentinfo
+ * 语义，内部快捷键按钮为 fixed 定位，不占布局。 */
+.lc-monitor-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lc-monitor-footer {
+  display: contents;
+}
+
+.lw-main.lw-monitor-main {
+  max-width: none;
+  padding: 10px 14px var(--lc-space-4);
+}
+
+.lw-monitor-grid {
+  display: grid;
+  grid-template-columns: 252px minmax(0, 1fr) 332px;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── 左：房间列表 ─────────────────────────────────────── */
+
+.lw-monitor-rooms {
+  min-height: 0;
+}
+
+.lw-monitor-rooms__body {
+  gap: var(--lc-space-2);
+}
+
+.lw-monitor-room-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-3);
+}
+
+.lw-monitor-room {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: var(--lc-space-4) 9px;
+  border: var(--lc-border-width) solid var(--lc-line-soft);
+  border-left: 2px solid var(--lc-line);
+  border-radius: var(--lc-radius-sm);
+  background: var(--lc-surface-sunken);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.lw-monitor-room:hover {
+  border-left-color: var(--lc-accent-line);
+  background: var(--lc-surface-hover);
+}
+
+.lw-monitor-room.is-selected {
+  border-color: var(--lc-accent-line);
+  border-left-color: var(--lc-accent);
+  background: var(--lc-surface-hover);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.lw-monitor-room:focus-visible {
+  outline: var(--lc-focus-ring-width-tight) solid var(--lc-accent-line);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.lw-monitor-room__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lc-space-3);
+}
+
+.lw-monitor-room__id {
+  color: var(--lc-text-faint);
+  font-family: var(--lc-font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.04em;
+}
+
+.lw-monitor-room__title {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--lc-text-strong);
+  font-size: var(--lc-text-2xs);
+  font-weight: 600;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.lw-monitor-room__streamer {
+  overflow: hidden;
+  color: var(--lc-text-faint);
+  font-size: 8.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lw-monitor-room__bar {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: 1px 0;
+}
+
+.lw-monitor-room__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--lc-space-1) var(--lc-space-4);
+  color: var(--lc-text-faint);
+  font-size: 8.5px;
+}
+
+.lw-monitor-room__slice {
+  color: var(--lc-status-positive-text);
+}
+
+/* ── 中：预览 + 热度/切片 ─────────────────────────────── */
+
+.lw-monitor-center {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lw-monitor-center .lw-panel.lw-preview {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.lw-monitor-center .lw-preview__stage {
+  height: auto;
+  min-height: 200px;
+  flex: 1 1 auto;
+}
+
+.lw-monitor-status {
+  flex: 0 0 auto;
+}
+
+.lw-monitor-status__badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--lc-space-2);
+  flex: 0 0 auto;
+}
+
+.lw-monitor-status__body {
+  gap: var(--lc-space-4);
+}
+
+.lw-monitor-status__heat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 7px 9px;
+  border: var(--lc-border-width) solid var(--lc-line-soft);
+  border-radius: var(--lc-radius-sm);
+  background: var(--lc-surface-sunken);
+}
+
+.lw-monitor-status__heat-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--lc-space-2) var(--lc-space-4);
+}
+
+.lw-monitor-status__heat-head > span:first-child {
+  color: var(--lc-text-secondary);
+  font-size: 9.5px;
+}
+
+.lw-monitor-status__heat-head > strong {
+  color: var(--lc-text-strong);
+  font-family: var(--lc-font-mono);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.lw-monitor-status__heat-head > strong.is-hot {
+  color: #ff9b99;
+}
+
+.lw-monitor-status__heat-head > .lw-mono {
+  margin-left: auto;
+  color: var(--lc-text-faint);
+  font-size: 8.5px;
+}
+
+.lw-monitor-status__bar {
+  height: 8px;
+}
+
+.lw-monitor-status__reason {
+  margin: 0;
+  color: var(--lc-text-faint);
+  font-size: 9px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.lw-monitor-status__slices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lc-space-3);
+}
+
+.lw-monitor-status__slices > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-1);
+  min-width: 0;
+  padding: var(--lc-space-3) var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--lc-line-soft);
+  border-radius: var(--lc-radius-sm);
+  background: var(--lc-surface-sunken);
+}
+
+.lw-monitor-status__slices span {
+  color: var(--lc-text-faint);
+  font-size: 8.5px;
+}
+
+.lw-monitor-status__slices strong {
+  overflow: hidden;
+  color: var(--lc-text-strong);
+  font-family: var(--lc-font-mono);
+  font-size: var(--lc-text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.lw-monitor-status__slices small {
+  color: var(--lc-text-faint);
+  font-size: 8.5px;
+  font-weight: 400;
+}
+
+.lw-monitor-status__clip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  color: var(--lc-text-faint);
+  font-size: 9px;
+}
+
+.lw-monitor-status__clip.lw-ellipsis {
+  max-width: 100%;
+}
+
+/* ── 右：弹幕窗口 ─────────────────────────────────────── */
+
+.lw-monitor-danmaku {
+  min-height: 0;
+}
+
+.lw-monitor-danmaku__badge {
+  flex: 0 0 auto;
+}
+
+.lw-monitor-danmaku__body {
+  gap: var(--lc-space-2);
+}
+
+.lw-monitor-danmaku__body .lw-danmaku__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  border: 0;
+  background: transparent;
+}
+
+.lw-monitor-danmaku__body .lw-danmaku__row {
+  flex-wrap: wrap;
+  align-items: baseline;
+  padding: var(--lc-space-2) 5px;
+  font-size: 9.5px;
+}
+
+.lw-monitor-danmaku__body .lw-danmaku__offset {
+  width: 40px;
+}
+
+.lw-monitor-danmaku__body .lw-danmaku__text {
+  flex: 1 1 150px;
+  color: var(--lc-text-primary);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* v1.1：列内空态改用设计层 EmptyState（density="compact"），只占内容高度、不撑满弹幕列。 */
+.lw-monitor-danmaku__body > .lc-empty {
+  flex: 0 0 auto;
+}
+
+/* ── 响应式 ───────────────────────────────────────────── */
+
+@media (max-width: 1360px) {
+  .lw-monitor-grid {
+    grid-template-columns: 224px minmax(0, 1fr) 292px;
+  }
+
+  .lw-monitor-status__slices {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1120px) {
+  .lw-monitor-grid {
+    grid-template-columns: 200px minmax(0, 1fr) 262px;
+    gap: var(--lc-space-4);
+  }
+
+  .lw-main.lw-monitor-main {
+    padding: var(--lc-space-4) 10px var(--lc-space-3);
+  }
+}
+
+/* ── 状态徽标（task-59）─────────────────────────────────
+ * app.css 的 .lw-badge--ok 用固定 #7fd18f，在浅色底上约 4.16:1；
+ * /live/monitor 不在 .lc-live-page 作用域内，故在此按设计层令牌覆盖。
+ * 仅改前景/描边/底色，尺寸与布局不动。 */
+.lc-monitor-page .lw-badge--ok {
+  color: var(--ink-green);
+  border-color: color-mix(in srgb, var(--dot-green) 32%, transparent);
+  background: color-mix(in srgb, var(--dot-green) 8%, var(--surface));
+}

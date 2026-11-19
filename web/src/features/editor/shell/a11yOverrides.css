@@ -1,0 +1,210 @@
+/*
+ * 编辑器 shell 层 a11y 覆盖（task-52）。
+ *
+ * 目的：在 shell 作用域内补齐 axe 报出的对比度、键盘焦点与跳过导航缺口，
+ * 不修改 app.css / 组件文件（components 部分归 task-50）。
+ *
+ * 约定：
+ * - 全部规则挂 `.editor-shell`，避免影响 /studio、/live 等其它页面。
+ * - 焦点环用设计层 `--focus` 实色（浅 5.07 / 深 5.44，≥3:1），尺寸 `--ring-width` 2px。
+ */
+
+/* 跳过导航：默认移出视口，键盘聚焦时出现在左上角。 */
+.ed-skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 999;
+  padding: var(--lc-space-4) 14px;
+  border: var(--lc-border-width) solid var(--focus, #6b82ff);
+  border-radius: var(--lc-radius-control-lg);
+  background: var(--surface, #151516);
+  color: var(--text, #ececea);
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-sm);
+  line-height: 1;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 16px));
+}
+
+.ed-skip-link:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--focus, #6b82ff);
+  outline-offset: var(--ring-offset, 2px);
+  transform: none;
+}
+
+/* 视觉隐藏、读屏可读（页面 h1）。 */
+.ed-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}
+
+/*
+ * 分隔条：旧 `.panel-splitter { outline: none }` 让键盘焦点不可见，仅靠
+ * ::after 的 2px 细线（P1-6）。这里补真实焦点环；分隔条本身只有 6px 宽，
+ * 用负 offset 让环落在热区内，避免被相邻面板 overflow 裁掉。
+ */
+.editor-shell .panel-splitter:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--focus, #6b82ff);
+  outline-offset: calc(-1 * var(--lc-focus-offset));
+}
+
+.editor-shell .panel-splitter:focus-visible::after {
+  opacity: 0.35;
+}
+
+/*
+ * 表单输入：旧 effect-controls.css 只在 `:focus` 改边框色。组件若已补
+ * `:focus-visible` 环，这里同值覆盖（幂等）；未补时由本规则兜住。
+ */
+.editor-shell .ec-input:focus-visible,
+.editor-shell .ec-stepper input:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--focus, #6b82ff);
+  outline-offset: var(--ring-offset, 2px);
+}
+
+/*
+ * 对比度兜底：旧 app.css 的 `.project-foot` 用 `--lc-text-faint`（深色 4.15）。
+ * 换成设计层 `--text-2`（浅 #5c5c58 / 深 #a5a5a0），随主题自动取值。
+ */
+.editor-shell .project-foot {
+  color: var(--text-2, var(--lc-text-secondary));
+}
+
+/* skip 目标获得焦点时不要出现额外描边（主区不是交互控件）。 */
+.editor-shell .editor-center:focus {
+  outline: none;
+}
+
+/* The window follows its theme; a fixed light accent fails on the light header. */
+.editor-shell .workspace-window-kicker {
+  --workspace-kicker-text: var(--canvas-text, #e9e9e6);
+  --workspace-kicker-surface: var(--canvas-panel-head, #19191b);
+  color: var(--workspace-kicker-text);
+  background: var(--workspace-kicker-surface);
+}
+
+/* The root dim alias stays dark-theme gray even inside a light effect window. */
+.editor-shell .workspace-window .ec-empty {
+  --ec-empty-text: var(--canvas-text-muted, #a5a5a0);
+  --ec-empty-surface: var(--canvas-panel, #141416);
+  color: var(--ec-empty-text);
+  background: var(--ec-empty-surface);
+}
+
+/*
+ * 对比度兜底（task-104，D4 收尾）：
+ * 1) 选中行时长沿用旧 app.css 硬编码浅蓝 #b7d5f1，落在 focus 12% 的选中底上仅 ~1.5:1。
+ *    换设计层 `--text-2`（浅 #5c5c58 / 深 #a5a5a0），随主题取值。
+ * 2) 监视器只读提示 `.monitor-readonly` 用的 `.panel.monitor` 旧令牌 #8a8a8a，白底 3.45:1。
+ *    换设计层 `--text-3`（浅 #6b6b66 / 深 #8f8f89），两主题均 >= 4.5:1。
+ */
+.editor-shell .ed-side .tree-row.is-selected .tree-duration {
+  color: var(--text-2);
+}
+
+.editor-shell .monitor-readonly {
+  color: var(--text-3);
+}
+
+/* Rail foreground and surface must follow the same theme, including its badges. */
+.editor-shell .ai-rail {
+  --ai-rail-surface: var(--surface, #151516);
+  --ai-rail-text: var(--text-2, #a5a5a0);
+  --ai-rail-active-surface: var(--surface-3, #232324);
+  --ai-rail-active-text: var(--text, #f1f1ee);
+  --ai-rail-badge-surface: #1f5fae;
+  --ai-rail-badge-text: #ffffff;
+  background: var(--ai-rail-surface);
+}
+
+.editor-shell .ai-rail .ai-rail-brand,
+.editor-shell .ai-rail .ai-rail-tab {
+  color: var(--ai-rail-text);
+}
+
+.editor-shell .ai-rail .ai-rail-brand:hover,
+.editor-shell .ai-rail .ai-rail-tab:hover,
+.editor-shell .ai-rail .ai-rail-tab.is-active,
+.editor-shell .ai-rail .ai-rail-inspector.is-active {
+  color: var(--ai-rail-active-text);
+  background: var(--ai-rail-active-surface);
+}
+
+.editor-shell .ai-rail .ai-rail-tab em {
+  color: var(--ai-rail-badge-text);
+  background: var(--ai-rail-badge-surface);
+}
+
+/* The retry control is on a dark overlay in both themes; keep its white text AA. */
+.editor-shell .editor-blocking {
+  --editor-retry-text: #ffffff;
+  --editor-retry-surface: #1f5fae;
+  --editor-retry-hover: #2467b8;
+}
+
+/* An opaque copy surface avoids contrast depending on the overlay's underlay. */
+.editor-shell .editor-blocking > p {
+  --editor-blocking-copy-text: #a5a5a0;
+  --editor-blocking-copy-surface: #0a0b0c;
+  color: var(--editor-blocking-copy-text);
+  background: var(--editor-blocking-copy-surface);
+}
+
+.editor-shell .editor-blocking .primary-button:not(:disabled) {
+  color: var(--editor-retry-text);
+  background: var(--editor-retry-surface);
+}
+
+.editor-shell .editor-blocking .primary-button:hover:not(:disabled) {
+  background: var(--editor-retry-hover);
+}
+
+/* Root compatibility aliases stay dark; pair effect copy with the themed window surfaces. */
+.editor-shell .workspace-window .ec-summary {
+  --ec-summary-surface: var(--canvas-panel-head, #19191b);
+  --ec-summary-title: var(--canvas-text, #e9e9e6);
+  --ec-summary-muted: var(--canvas-text-muted, #a5a5a0);
+  --ec-summary-accent: var(--canvas-accent, #7ec2ff);
+  --ec-summary-badge-surface: var(--canvas-panel, #141416);
+  background: var(--ec-summary-surface);
+}
+
+.editor-shell .workspace-window .ec-summary > div > strong {
+  color: var(--ec-summary-title);
+  background: var(--ec-summary-surface);
+}
+
+.editor-shell .workspace-window .ec-summary > div > span {
+  color: var(--ec-summary-muted);
+  background: var(--ec-summary-surface);
+}
+
+/* The summary's span rule otherwise beats the enabled badge's accent. */
+.editor-shell .workspace-window .ec-badge {
+  color: var(--ec-summary-accent);
+  background: var(--ec-summary-badge-surface);
+}
+
+.editor-shell .workspace-window .ec-badge.is-off {
+  color: var(--ec-summary-muted);
+}
+
+.editor-shell .workspace-window .ec-keyframe-hint {
+  --ec-keyframe-hint-text: var(--canvas-text-muted, #a5a5a0);
+  --ec-keyframe-hint-accent: var(--canvas-accent, #7ec2ff);
+  --ec-keyframe-hint-surface: var(--canvas-panel, #141416);
+  color: var(--ec-keyframe-hint-text);
+  background: var(--ec-keyframe-hint-surface);
+}
+
+.editor-shell .workspace-window .ec-keyframe-hint.is-on {
+  color: var(--ec-keyframe-hint-accent);
+}

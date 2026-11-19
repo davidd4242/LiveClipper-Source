@@ -1,0 +1,55 @@
+.fc-right-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: #1f2023;
+  border: 1px solid #34363b;
+  border-radius: 8px;
+}
+
+.fc-right-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 56px;
+  padding: 6px 4px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #b9bcc4;
+  font-size: 11px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.fc-right-tool svg {
+  width: 16px;
+  height: 16px;
+}
+
+.fc-right-tool-label {
+  white-space: nowrap;
+}
+
+.fc-right-tool:hover {
+  background: #2a2c31;
+  color: #e8eaee;
+}
+
+.fc-right-tool.is-active {
+  background: #3a2615;
+  color: #ffb067;
+  box-shadow: inset 0 0 0 1px #6b4420;
+}
+
+.fc-right-tool:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.fc-right-tool:focus-visible {
+  outline: 2px solid #ff9a3c;
+  outline-offset: 1px;
+}

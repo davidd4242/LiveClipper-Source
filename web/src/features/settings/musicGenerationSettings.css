@@ -1,0 +1,269 @@
+.settings-music-gen-span {
+  grid-column: 1 / -1;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.music-gen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--line, #3a3a3f);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-2, #1c1c20);
+  color: var(--text, #ececf0);
+  font-size: 14px;
+}
+
+.music-gen__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.music-gen__note,
+.music-gen__protocol p {
+  max-width: 88ch;
+  margin: 0;
+  color: var(--text-3, #a0a0aa);
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.music-gen__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.music-gen__choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.music-gen__choice legend {
+  padding: 0;
+  margin-bottom: 6px;
+  color: var(--text-2, #c8c8d0);
+  font-size: 13px;
+}
+
+.music-gen__choice label,
+.music-gen__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.music-gen__choice input,
+.music-gen__check input {
+  accent-color: #ff9a3c;
+}
+
+.music-gen__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+}
+
+.music-gen__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--text-2, #c8c8d0);
+}
+
+.music-gen__field--wide {
+  grid-column: 1 / -1;
+}
+
+.music-gen__field input,
+.music-gen__field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 10px;
+  border: 1px solid var(--line, #3a3a3f);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface, #141417);
+  color: var(--text, #ececf0);
+  font: inherit;
+  font-size: 14px;
+}
+
+.music-gen__field input:focus-visible,
+.music-gen__field select:focus-visible,
+.music-gen__choice input:focus-visible,
+.music-gen__check input:focus-visible,
+.music-gen__protocol summary:focus-visible {
+  outline: 2px solid #ff9a3c;
+  outline-offset: 2px;
+}
+
+.music-gen__field input:disabled,
+.music-gen__field select:disabled {
+  opacity: 0.6;
+}
+
+.music-gen__status {
+  margin: 0;
+  font-size: 13px;
+}
+
+.music-gen__muted {
+  margin-left: 8px;
+  color: var(--text-3, #a0a0aa);
+}
+
+.music-gen__protocol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--line, #3a3a3f);
+  border-left: 3px solid #ff9a3c;
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface, #141417);
+}
+
+.music-gen__protocol summary {
+  cursor: pointer;
+  color: #ff9a3c;
+  font-size: 13px;
+}
+
+.music-gen__protocol pre {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-2, #1c1c20);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12.5px;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.music-gen__banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--danger, #ff6b6b);
+  border-radius: var(--radius-md, 8px);
+  color: var(--danger, #ff6b6b);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.music-gen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.music-gen__error,
+.music-gen__ok {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.music-gen__error {
+  color: var(--danger, #ff6b6b);
+}
+
+.music-gen__ok {
+  color: var(--text-2, #c8c8d0);
+}
+
+.music-gen__error:empty,
+.music-gen__ok:empty {
+  display: none;
+}
+
+.music-gen__local,
+.music-gen__models {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.music-gen__models {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.music-gen__model {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--line, #3a3a3f);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface, #141417);
+}
+
+.music-gen__model-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.music-gen__dialog {
+  width: min(520px, calc(100vw - 32px));
+  padding: 18px 20px;
+  border: 1px solid var(--line, #3a3a3f);
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-2, #1c1c20);
+  color: var(--text, #ececf0);
+}
+
+.music-gen__dialog[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.music-gen__dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.music-gen__dialog-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+@container (max-width: 560px) {
+  .music-gen {
+    padding: 14px;
+  }
+
+  .music-gen__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .music-gen__actions > button {
+    flex: 1 1 auto;
+  }
+}

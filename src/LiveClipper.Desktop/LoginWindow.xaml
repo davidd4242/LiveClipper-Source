@@ -1,0 +1,22 @@
+<Window x:Class="LiveClipper.Desktop.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="登录 B 站（扫码）" Icon="Assets/liveclipper.ico" Height="720" Width="520"
+        MinHeight="560" MinWidth="420" Background="#2c2c2e" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Margin="14,12" Foreground="#B3FFFFFF" FontSize="12" TextWrapping="Wrap"
+                   Text="请使用 B 站手机客户端扫码登录。登录成功后本窗口会自动关闭，Cookie 会加密保存在本机。" />
+        <wv2:WebView2 x:Name="LoginBrowser" Grid.Row="1" />
+        <Grid Grid.Row="2" Margin="14,10">
+            <TextBlock x:Name="LoginStatus" HorizontalAlignment="Left" VerticalAlignment="Center"
+                       Foreground="#8CFFFFFF" FontSize="12" Text="正在打开登录页面…" />
+            <Button x:Name="CancelButton" Content="取消" HorizontalAlignment="Right" Padding="16,6" Click="OnCancel" />
+        </Grid>
+    </Grid>
+</Window>

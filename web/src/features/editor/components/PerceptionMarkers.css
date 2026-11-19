@@ -1,0 +1,98 @@
+.perception-markers {
+  position: absolute;
+  inset: 50% 0 var(--lc-space-1);
+  z-index: var(--lc-z-panel);
+  overflow: hidden;
+  border-radius: var(--lc-radius-xs);
+  pointer-events: none;
+}
+
+.perception-silence {
+  position: absolute;
+  inset-block: 0;
+  background: var(--lc-surface-selected);
+  border-block: var(--lc-border-width) dashed var(--lc-text-muted);
+}
+
+.perception-shot {
+  position: absolute;
+  inset-block: 0;
+  border-inline-start: var(--lc-focus-ring-width) solid var(--lc-warning);
+}
+
+.perception-loudness {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--lc-accent-line);
+  stroke-width: var(--lc-border-width);
+}
+
+.perception-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lc-space-2) var(--lc-space-5);
+  padding: var(--lc-space-2) var(--lc-space-4);
+  border-block-end: var(--lc-border-width) solid var(--lc-line-soft);
+  background: var(--lc-surface);
+  color: var(--lc-text-secondary);
+  font-family: var(--lc-font-ui);
+  font-size: var(--lc-text-xs);
+  line-height: var(--lc-leading-body);
+  overflow-wrap: anywhere;
+}
+
+.perception-status.is-error {
+  background: var(--lc-danger-surface);
+  border-color: var(--lc-danger);
+  color: var(--lc-text-primary);
+}
+
+.perception-legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--lc-space-4);
+}
+
+.perception-legend-silence {
+  border-block-end: var(--lc-border-width) dashed var(--lc-text-muted);
+}
+
+.perception-legend-shot {
+  color: var(--lc-warning);
+  border-inline-start: var(--lc-focus-ring-width) solid var(--lc-warning);
+  padding-inline-start: var(--lc-space-2);
+}
+
+.perception-legend-loudness {
+  color: var(--lc-accent-line);
+  border-block-end: var(--lc-border-width) solid var(--lc-accent-line);
+}
+
+.perception-params {
+  color: var(--lc-text-muted);
+  font-family: var(--lc-font-mono);
+}
+
+.perception-retry {
+  padding: var(--lc-space-1) var(--lc-space-3);
+  border: var(--lc-border-width) solid var(--lc-line);
+  border-radius: var(--lc-radius-control);
+  background: var(--lc-surface-raised);
+  color: var(--lc-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.perception-retry:hover {
+  background: var(--lc-surface-hover);
+}
+
+.perception-retry:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--lc-focus-ring);
+  outline-offset: var(--lc-focus-offset);
+}

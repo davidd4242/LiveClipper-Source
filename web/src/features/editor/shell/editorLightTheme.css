@@ -1,0 +1,194 @@
+/*
+ * 编辑器浅色主题（P4 换壳）：外壳 / 面板跟随全局 `<html data-theme>`，
+ * 监视器画面与时间线画布保持深色。
+ *
+ * 约定：
+ * - 只在 `:root[data-theme="light"]` 下生效；深色主题继续用 design/ui/tokens.css 的 --lc-*，
+ *   不做任何覆盖，保持既有深色观感。
+ * - 浅色值取自设计层 `web/src/design/tokens.css` 的 light 主题；`--lc-*` 是编辑器自有的
+ *   42 个颜色令牌（design/ui/tokens.css:10-66），本文件只做「浅色映射」。
+ * - 画布边界：`.viewers`（源/节目监视器）与 `.timeline-panel` 重新钉回深色令牌，
+ *   画布内部即使消费 --lc-* 也保持深色；与 `data-canvas-theme="dark"`、
+ *   `[data-surface="canvas"]` 的既有约定一致。
+ */
+
+/* ── 浅色映射：外壳 / 面板 / 抽屉 / 浮窗 ─────────────────────── */
+:root[data-theme='light'] .editor-shell {
+  color-scheme: light;
+
+  /* 画布与表面（面板、抽屉、浮窗使用） */
+  --lc-bg-root: var(--bg);
+  --lc-chrome: var(--surface);
+  --lc-surface: var(--surface);
+  --lc-surface-sunken: var(--surface-2);
+  --lc-surface-raised: #ffffff;
+  --lc-surface-panel-head: var(--surface-3);
+  --lc-surface-input: #ffffff;
+  --lc-surface-selected: #e6eefb;
+  --lc-surface-hover: var(--surface-3);
+
+  /* 分隔线 */
+  --lc-line-strong: var(--line-strong);
+  --lc-line: #d3d3cd;
+  --lc-line-soft: var(--line);
+  --lc-line-inset: var(--line);
+
+  /* 文字 */
+  --lc-text-primary: var(--text);
+  --lc-text-strong: #0d0d0c;
+  --lc-text-secondary: var(--text-2);
+  /* 浅色主题下工作区大面积是 #f7f7f4，原来的 #8b8b86 只有 3.2:1，达不到小字 4.5:1。 */
+  --lc-text-muted: #57574f;
+  --lc-text-faint: #6f6f68;
+  --lc-text-inverse: #ffffff;
+
+  /* 交互蓝 */
+  --lc-accent: #1f6fd6;
+  --lc-accent-hover: #2f81e8;
+  --lc-accent-pressed: #1857a8;
+  --lc-accent-soft: rgba(61, 91, 255, 0.12);
+  --lc-accent-line: #3d5bff;
+  --lc-focus-ring: #3d5bff;
+  --lc-selection-border: #9dbde0;
+
+  /* 语义色 */
+  --lc-live: #b8722c;
+  --lc-success: #1fa855;
+  --lc-success-text: #16803f;
+  --lc-success-surface: #e6f4ea;
+  --lc-warning: #9a5c00;
+  --lc-warning-surface: #fbf1d8;
+  --lc-danger: #c62f35;
+  --lc-danger-surface: #fbe9e9;
+
+  /* 阴影 */
+  --lc-shadow-drawer: -16px 0 34px rgba(22, 22, 22, 0.12);
+}
+
+/* ── 浮窗（效果控件 / 元数据等）与 AI/属性抽屉：面板跟随主题 ──────
+ * workspaceP1b.css 把「二级窗口 + 抽屉」统一切到 --canvas-* 深色画布令牌，
+ * 浅色主题下在这里把这组令牌映射成设计层浅色令牌。 */
+:root[data-theme='light'] .editor-shell :is(.workspace-window, .ai-drawer) {
+  --canvas-bg: var(--bg);
+  --canvas-panel: var(--surface);
+  --canvas-panel-head: var(--surface-3);
+  --canvas-line: var(--line);
+  --canvas-line-strong: var(--line-strong);
+  --canvas-text: var(--text);
+  --canvas-text-muted: var(--text-3);
+  --canvas-accent: #1f6fd6;
+  --canvas-marker: #9a5c00;
+  --canvas-inset: var(--surface-3);
+  --canvas-hover-bg: #e8e8e4;
+  --canvas-button: var(--surface-3);
+  --canvas-button-hover: #e8e8e4;
+  --canvas-button-hover-line: var(--line-strong);
+  --canvas-warning: #9a5c00;
+  --canvas-input: #ffffff;
+  --canvas-divider: var(--line);
+  --canvas-accent-strong: var(--text);
+}
+
+:root[data-theme='light'] .editor-shell .workspace-window {
+  box-shadow: var(--shadow-float);
+}
+
+/* ── 画布深色边界：监视器、时间线、音频混合器不随主题翻白 ─────────
+ * `.editor-center` 同时带 `data-surface="canvas"`（设计层深色画布作用域），
+ * 覆盖两类令牌：设计层 --surface/--text（组件用）与编辑器 --lc-*（画布用）。 */
+:root[data-theme='light'] .editor-shell .editor-center {
+  color-scheme: dark;
+
+  --lc-bg-root: #0b0b0b;
+  --lc-chrome: #141414;
+  --lc-surface: #232323;
+  --lc-surface-sunken: #1d1d1d;
+  --lc-surface-raised: #2a2a2a;
+  --lc-surface-panel-head: #1b1b1b;
+  --lc-surface-input: #181818;
+  --lc-surface-selected: #243342;
+  --lc-surface-hover: #2a2a2a;
+
+  --lc-line-strong: #0a0a0a;
+  --lc-line: #4a4a4a;
+  --lc-line-soft: #383838;
+  --lc-line-inset: #111111;
+
+  --lc-text-primary: #e6e6e6;
+  --lc-text-strong: #ffffff;
+  --lc-text-secondary: #c6c6c6;
+  --lc-text-muted: #a6a6a6;
+  --lc-text-faint: #8a8a8a;
+  --lc-text-inverse: #ffffff;
+
+  /* P1.7u（S3 实测）：白字压 #2e8ff0 = 3.332:1、压 #5aa9f7 = 2.484:1，均不达 4.5。
+   * 各降一档到 #2778ca（4.540:1）与 #417ab3（4.507:1），色相不变。 */
+  --lc-accent: #2778ca;
+  --lc-accent-hover: #417ab3;
+  --lc-accent-pressed: #2478c9;
+  --lc-accent-soft: rgba(39, 120, 202, 0.18);
+  --lc-accent-line: #78b9ff;
+  --lc-focus-ring: #78b9ff;
+  --lc-selection-border: #3f6f96;
+
+  --lc-live: #d3914d;
+  --lc-success: #5ba361;
+  --lc-success-text: #a5d4aa;
+  --lc-success-surface: #26392a;
+  --lc-warning: #d4b44b;
+  --lc-warning-surface: #322c20;
+  --lc-danger: #d95a58;
+  --lc-danger-surface: #3a2424;
+
+  --lc-shadow-drawer: -16px 0 34px rgba(0, 0, 0, 0.42);
+}
+
+/* 浮窗内提示条（.wsx-note）与部分画布块用写死的深色底，浅色主题下改回浅底。
+ * 只作用于浅色主题的浮窗/面板区域，深色主题保持原样。 */
+:root[data-theme='light'] .editor-shell .wsx-note {
+  background: var(--surface-3);
+  border-left-color: var(--line-strong);
+  color: var(--text-2);
+}
+
+:root[data-theme='light'] .editor-shell .wsx-note--warning {
+  background: rgba(212, 180, 75, 0.16);
+  border-left-color: var(--warning, #b8942f);
+  color: var(--text);
+}
+
+/* ── AI 抽屉 / 属性抽屉：面板跟随主题 ─────────────────────────
+ * 内部大部分颜色已走 --lc-*（浅色主题已映射），这里只覆盖写死的深色底与高亮色。 */
+:root[data-theme='light'] .editor-shell .ai-drawer {
+  background: var(--surface);
+  border-left-color: var(--line-strong);
+}
+
+:root[data-theme='light'] .editor-shell .ai-view,
+:root[data-theme='light'] .editor-shell .inspector-body {
+  background: var(--surface);
+}
+
+:root[data-theme='light'] .editor-shell .ai-drawer .ai-brand-dot {
+  color: var(--text-2);
+  border-color: var(--line-strong);
+}
+
+:root[data-theme='light'] .editor-shell .ai-drawer .text-button.is-primary {
+  color: var(--text);
+  background: var(--surface-3);
+  border-color: var(--line-strong);
+}
+
+:root[data-theme='light'] .editor-shell .ai-drawer .text-button.is-primary:hover {
+  color: var(--text);
+  background: var(--surface-4);
+}
+
+:root[data-theme='light'] .editor-shell .ai-drawer .candidate-card.is-active {
+  background: var(--surface-3);
+}
+
+:root[data-theme='light'] .editor-shell .ai-drawer .candidate-score {
+  border-color: var(--line);
+}

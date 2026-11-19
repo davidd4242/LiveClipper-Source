@@ -1,0 +1,165 @@
+.lc-toast {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  /* 层叠契约：toast 1100 高于 modal 1000，避免被新弹窗压住（见 design/tokens.css）。 */
+  z-index: var(--z-toast, 1100);
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: max-content;
+  max-width: min(560px, calc(100vw - 48px));
+  padding: var(--lc-space-5) var(--lc-space-5) var(--lc-space-5) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-inverse);
+  color: var(--bg);
+  box-shadow: var(--shadow-float);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  transform: translateX(-50%);
+  animation: lc-toast-in var(--motion-theme) ease;
+}
+
+.lc-toast__dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: var(--lc-space-3);
+  border-radius: 50%;
+  background: var(--text-3);
+}
+
+.lc-toast__dot--success {
+  background: var(--dot-green);
+}
+
+.lc-toast__dot--info {
+  background: var(--dot-blue);
+}
+
+.lc-toast__dot--error {
+  background: var(--dot-red);
+}
+
+.lc-toast__body {
+  min-width: 0;
+}
+
+.lc-toast__message {
+  font-weight: 550;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.lc-toast__description {
+  margin-top: var(--lc-space-1);
+  opacity: 0.78;
+  font-size: var(--fs-meta);
+}
+
+.lc-toast__action {
+  flex: none;
+  align-self: center;
+}
+
+.lc-toast__close {
+  box-sizing: border-box;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) ease,
+    opacity var(--motion-fast) ease;
+}
+
+.lc-toast__close:hover {
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  opacity: 1;
+}
+
+.lc-toast__close:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: var(--ring-offset);
+  opacity: 1;
+}
+
+.lc-toast__close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+@keyframes lc-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ── v1.1：ToastStack（最多 3 条堆叠；单条 <Toast /> 行为不变） ── */
+.lc-toast-stack {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  z-index: var(--z-toast, 1100);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: max-content;
+  max-width: min(560px, calc(100vw - 48px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.lc-toast-stack .lc-toast {
+  position: static;
+  max-width: 100%;
+  transform: none;
+  animation: lc-toast-stack-in var(--motion-theme) ease;
+  pointer-events: auto;
+}
+
+@keyframes lc-toast-stack-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-toast {
+    animation: none;
+  }
+
+  .lc-toast__close {
+    transition: none;
+  }
+
+  .lc-toast-stack .lc-toast {
+    animation: none;
+  }
+}

@@ -1,0 +1,69 @@
+/* 空态：尺寸全部走组件内 CSS 变量，页面可局部覆盖（v1.1 density 支持）。
+ * 颜色/字体只用设计令牌；禁止硬编码色值。 */
+.lc-empty {
+  --lc-empty-min-height: 148px;
+  --lc-empty-padding: var(--space-5) var(--space-4);
+  --lc-empty-icon-size: 24px;
+  --lc-empty-gap: var(--space-2);
+
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--lc-empty-gap);
+  min-height: var(--lc-empty-min-height);
+  padding: var(--lc-empty-padding);
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-meta);
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* 容器本身非交互：不提供 hover 暗示（T-02）；交互只来自内部 action。
+   若未来要整卡可点，应改为 <button>/<a> 包裹并补四态与 aria，而不是给容器加 hover。 */
+
+/* 列内紧凑占位：不撑高列（MonitorScreen 的房间/弹幕列表等） */
+.lc-empty--compact {
+  --lc-empty-min-height: 96px;
+  --lc-empty-padding: var(--space-4);
+  --lc-empty-icon-size: 18px;
+  --lc-empty-gap: var(--space-1);
+}
+
+.lc-empty__icon {
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--space-2);
+  color: var(--text-3);
+}
+
+.lc-empty__icon > svg {
+  width: var(--lc-empty-icon-size);
+  height: var(--lc-empty-icon-size);
+}
+
+.lc-empty__title {
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  font-weight: 550;
+}
+
+.lc-empty__desc {
+  max-width: 42ch;
+  margin: var(--lc-space-2) 0 0;
+  color: var(--text-3);
+}
+
+.lc-empty__action {
+  margin-top: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-empty {
+    transition: none;
+  }
+}

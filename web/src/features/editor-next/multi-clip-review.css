@@ -1,0 +1,45 @@
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic).editor-next-drawer.multiclip-workbench {
+ width:min(1040px,calc(100vw - 96px));max-width:calc(100vw - 96px);height:min(760px,calc(100dvh - 72px));max-height:calc(100dvh - 56px);inset:52px 16px auto auto;inset-block-start:52px;inset-block-end:auto;inset-inline-start:auto;inset-inline-end:16px;padding:0;overflow:hidden;border-radius:10px;border-color:var(--lc-text-faint);background:var(--lc-surface-sunken);font-size:12px;
+}
+.multiclip-summary {color:var(--lc-text-secondary);font-size:11px;line-height:1.6;margin-bottom:10px!important;}
+.multiclip-select {margin-top:12px;margin-bottom:0;}.multiclip-context {color:var(--lc-text-secondary);font-size:11px;line-height:1.6;padding:7px 0;}
+.multiclip-lines {max-height:190px;overflow:auto;border-block:1px solid var(--lc-text-faint);padding:7px 0;}.multiclip-lines p {font-size:12px;line-height:1.7;margin-bottom:6px;}.multiclip-lines time {display:inline-block;font-family:var(--lc-font-mono);font-size:10px;color:var(--lc-accent-line);margin-right:8px;}
+.multiclip-caution {font-size:11px;color:var(--lc-text-secondary);line-height:1.7;padding-top:8px;}.multiclip-hint {font-size:11px;line-height:1.7;padding:8px 0;}.multiclip-hint button {font-size:11px;padding:2px 5px;}
+.multiclip-row-title {font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.multiclip-order {display:flex;flex-direction:column;gap:2px;}.multiclip-order button {font-size:11px;padding:0 5px;min-height:20px;}
+@media(max-width:860px){:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic).editor-next-drawer.multiclip-workbench {width:calc(100vw - 96px);max-width:calc(100vw - 96px);inset:44px 16px auto auto;inset-block-start:44px;inset-inline-start:auto;inset-inline-end:16px;inset-block-end:auto;height:calc(100dvh - 44px);max-height:calc(100dvh - 44px);border-radius:0;}}
+
+.semantic-review {display:flex;flex-direction:column;gap:12px;padding:4px;}.semantic-review p,.semantic-review li {font-size:11px;line-height:1.65;margin:8px 0;}.semantic-review button {font-size:11px;}.semantic-confirm {margin-top:12px;border:1px solid var(--lc-accent-line);border-radius:6px;padding:10px;overflow-wrap:anywhere;}.semantic-confirm details {max-height:200px;overflow:auto;}.semantic-evidence {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:10px;}.semantic-evidence section {background:var(--lc-surface-sunken);padding:10px;border-radius:5px;min-width:0;}.semantic-evidence h4 {font-size:12px;}.semantic-evidence small {color:var(--lc-text-secondary);font-family:var(--lc-font-mono);}.semantic-decisions,.semantic-risks {display:flex;flex-direction:column;gap:8px;margin-top:12px;}.semantic-decisions label,.semantic-risks label {font-size:11px;display:flex;align-items:flex-start;gap:7px;}.semantic-plan ol {padding-left:20px;}.semantic-plan li {display:flex;justify-content:space-between;align-items:center;gap:8px;}.semantic-risks strong {font-size:11px;color:var(--lc-text-secondary);}
+@media(max-width:1050px){.semantic-evidence{grid-template-columns:1fr;}}
+
+/* R58: long descriptions and disclosure share ONE main scroll area, not flex-fixed rows. */
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-main-scroll {flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-scroll-notices {padding:0 8px 10px;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-scroll-notices .silence-status {margin:0 0 8px;max-height:none;overflow:visible;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-data-notices {font-size:11px;color:var(--lc-text-secondary);line-height:1.65;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-data-notices summary {cursor:pointer;padding:5px 0;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-data-notices p {margin:6px 0;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .semantic-confirm details {max-height:none;overflow:visible;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .silence-list-heading,
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .silence-filters,
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .silence-pagination {flex:none;}
+@media(max-width:1000px), (max-height:740px) {
+ :is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .silence-list-heading {padding:10px 12px 7px;}
+ :is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .silence-filters {padding:0 12px 8px;gap:4px;flex-wrap:wrap;}
+ :is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .silence-filters button {padding:5px 8px;}
+ :is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .silence-footer {padding:10px 14px;gap:12px;}
+}
+
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-scene-boundaries {list-style:none;margin:10px 0;padding:0;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-scene-boundaries li {padding:10px 0;border-top:1px solid #2c3749;overflow-wrap:anywhere;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-scene-boundaries label {display:flex;align-items:flex-start;gap:8px;}
+:is(#editor-next-multiclip-drawer, #editor-next-independent-automatic) .multiclip-scene-boundaries input {flex:none;}
+
+/* Independent source disclosure is a fixed-height flex item, never squeezed over its text. */
+#editor-next-independent-automatic > .independent-automatic-intro {
+ flex:0 0 auto;min-width:0;display:grid;gap:8px;padding:0 16px 10px;
+ white-space:normal;overflow-wrap:anywhere;
+}
+#editor-next-independent-automatic > .independent-automatic-intro p {margin:0;line-height:1.6;}
+@media(max-width:1000px), (max-height:740px) {
+ #editor-next-independent-automatic > .independent-automatic-intro {max-height:35dvh;overflow-y:auto;}
+}

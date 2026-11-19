@@ -1,0 +1,51 @@
+/* R51-FX1c · 混音器推子读数不再互相叠压。
+   根因：app.css 的 .fader-value 只有 white-space: nowrap，没有裁切；四条约 32px 宽的推子条
+   各自放一个约 48px 的 "−12.0 dB"，溢出部分画到相邻条上，截图里连成 "0.0 dB12.0 dB6.0 dB0.0 dB"。
+   这里：等宽网格轨道 + 每条 min-width: 0 + 读数在本条内裁切（省略号）+ 等宽数字；
+   单位 dB 由 AudioMixer.tsx 在页脚统一标一次，条内只放带负号的数字。 */
+
+.audio-panel .mixer-body .mixer-strips {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--lc-space-2);
+}
+
+.audio-panel .mixer-strips .mixer-strip {
+  min-width: 0;
+  width: 100%;
+}
+
+.audio-panel .mixer-strips .strip-label,
+.audio-panel .mixer-strips .fader-value {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.audio-panel .mixer-strips .fader-value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.audio-panel .audio-footer .mixer-unit {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The loudness meter stays dark in both themes; use text blue, not button-fill blue. */
+.audio-panel .loudness-stats {
+  --mixer-stat-label: var(--lc-accent-line); /* = #78b9ff，两主题同值 */
+}
+
+.audio-panel .loudness-stats b {
+  color: var(--mixer-stat-label);
+}

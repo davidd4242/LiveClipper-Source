@@ -1,0 +1,254 @@
+/* FilmCraft Trim Monitor（修剪监视器）v1 —— 有编辑点时替换整个节目监视器。
+   规格来源：docs/projects/FC-P2-tools-trim-spec.md §3.4（布局常量 6 / 26+40 / 22 / 14 / half=(w-14)/2 / 24 / 按钮行）。 */
+
+.trim-monitor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel-bg, #14161b);
+  border-radius: var(--lc-radius-lg);
+  overflow: hidden;
+}
+
+.trim-monitor__head {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  height: 22px;
+  padding: 0 var(--lc-space-3);
+  flex: 0 0 auto;
+}
+
+.trim-monitor__head .panel-tab {
+  white-space: nowrap;
+}
+
+.trim-monitor__kind {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 var(--lc-space-3);
+  border-radius: var(--lc-radius-control);
+  background: rgba(242, 196, 61, 0.14);
+  color: #f2c43d;
+  font-size: var(--lc-text-2xs);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.trim-monitor__kind:hover {
+  background: rgba(242, 196, 61, 0.24);
+}
+
+.trim-monitor__exit {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--lc-radius-control);
+  background: transparent;
+  color: var(--fg-muted, #9aa3ad);
+  cursor: pointer;
+}
+
+.trim-monitor__exit:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fg, #e6e9ee);
+}
+
+.trim-monitor__stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--lc-space-3) var(--lc-space-3) 0;
+}
+
+.trim-monitor__pointer {
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  cursor: ew-resize;
+}
+
+.trim-monitor__frame {
+  position: relative;
+  flex: 1 1 0;
+  max-width: calc((100% - 14px) / 2);
+  aspect-ratio: 16 / 9;
+  max-height: 100%;
+  min-height: 0;
+  background: #000;
+  border-radius: var(--lc-radius-control);
+  overflow: hidden;
+}
+
+.trim-monitor__frame.is-hot {
+  z-index: 1;
+}
+
+.trim-monitor__video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  pointer-events: none;
+}
+
+.trim-monitor__gap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%) 0 0 / 16px 16px,
+    #000;
+  color: #6b7280;
+  font-size: var(--lc-text-xs);
+  letter-spacing: 0.04em;
+}
+
+.trim-monitor__badge {
+  position: absolute;
+  top: var(--lc-space-2);
+  left: var(--lc-space-2);
+  max-width: calc(100% - 8px);
+  padding: 1px 5px;
+  border-radius: var(--lc-radius-xs);
+  background: rgba(0, 0, 0, 0.62);
+  color: #e6e9ee;
+  font-size: var(--lc-text-2xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.trim-monitor__timecode {
+  position: absolute;
+  right: var(--lc-space-2);
+  bottom: var(--lc-space-2);
+  padding: 1px 5px;
+  border-radius: var(--lc-radius-xs);
+  background: rgba(0, 0, 0, 0.62);
+  color: #e6e9ee;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--lc-text-2xs);
+  pointer-events: none;
+}
+
+.trim-monitor__controls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lc-space-2);
+  height: 40px;
+  padding: 0 var(--lc-space-3);
+}
+
+.trim-monitor__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lc-space-2);
+  width: 40px;
+  height: 26px;
+  padding: 0;
+  border: var(--lc-border-width) solid var(--line, rgba(255, 255, 255, 0.12));
+  border-radius: var(--lc-radius-control-lg);
+  background: var(--button-bg, rgba(255, 255, 255, 0.04));
+  color: var(--fg, #e6e9ee);
+  font-size: var(--lc-text-xs);
+  cursor: pointer;
+  transition: background 120ms ease-out, border-color 120ms ease-out;
+}
+
+.trim-monitor__button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.trim-monitor__button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.trim-monitor__button--wide {
+  width: 176px;
+}
+
+.trim-monitor__button:focus-visible {
+  outline: var(--lc-focus-ring-width) solid #265bc1;
+  outline-offset: var(--lc-focus-offset);
+}
+
+.trim-monitor__shift {
+  min-width: 30px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-muted, #9aa3ad);
+  font-size: var(--lc-text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.trim-monitor__hint {
+  flex: 0 0 auto;
+  padding: 0 var(--lc-space-4) var(--lc-space-3);
+  color: var(--fg-muted, #8b939d);
+  font-size: var(--lc-text-2xs);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trim-monitor__hint kbd {
+  display: inline-block;
+  min-width: 14px;
+  padding: 0 3px;
+  border: var(--lc-border-width) solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--lc-radius-control);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fg, #e6e9ee);
+  font-family: inherit;
+  font-size: var(--lc-text-2xs);
+  line-height: 14px;
+  text-align: center;
+}
+
+.trim-monitor__size {
+  position: absolute;
+  right: var(--lc-space-4);
+  bottom: var(--lc-space-2);
+  color: #4b5563;
+  font-size: var(--lc-text-2xs);
+  pointer-events: none;
+}
+
+.trim-monitor__body--empty {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-muted, #9aa3ad);
+  font-size: var(--lc-text-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trim-monitor__button {
+    transition: none;
+  }
+}

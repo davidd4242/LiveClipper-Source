@@ -1,0 +1,33 @@
+/* Place in the right-hand flex content slot; navigation stays outside this wrapper. */
+.lc-page-slide-motion {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lc-page-slide-motion__content {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  transform: translateX(24px);
+}
+
+/* Editor only: right edge = (100% - max(x,0)) + x <= 100%; at x=0 shrink is 0px, so full width. */
+.fc-editor-motion > .lc-page-slide-motion__content {
+  width: calc(100% - var(--lc-slide-shrink, 0px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-page-slide-motion__content {
+    transform: none !important;
+    will-change: auto !important;
+  }
+}

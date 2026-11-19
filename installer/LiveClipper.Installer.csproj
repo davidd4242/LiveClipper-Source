@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType><TargetFramework>net48</TargetFramework><UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion><PlatformTarget>x64</PlatformTarget><EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ApplicationIcon>..\assets\liveclipper.ico</ApplicationIcon><AssemblyName>LiveClipperSetup</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest><GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AssemblyTitle>LiveClipper 安装程序</AssemblyTitle><Version>1.3.1</Version><InformationalVersion>1.3.1</InformationalVersion>
+    <InstallerCacheDir Condition="'$(InstallerCacheDir)' == ''">$(MSBuildThisFileDirectory)..\.cache\installer</InstallerCacheDir>
+    <InstallerPayloadZip Condition="'$(InstallerPayloadZip)' == ''">payload.zip</InstallerPayloadZip>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+    <Reference Include="Microsoft.CSharp"/><Reference Include="System.Net.Http"/><Reference Include="System.Web.Extensions"/><Reference Include="System.IO.Compression"/><Reference Include="System.IO.Compression.FileSystem"/>
+    <Compile Include="Common.cs"/><Compile Include="Engine.cs"/><Compile Include="Engine.Online.cs"/><Compile Include="SetupForm.cs"/><Compile Include="SetupProgram.cs"/><Compile Include="SelfTest.cs"/><Compile Include="SourcePolicy.cs"/><Compile Include="DownloadClient.cs"/><Compile Include="ThemeControls.cs"/>
+    <EmbeddedResource Include="..\assets\liveclipper-logo-256.png" LogicalName="logo.png"/>
+    <Compile Include="DownloadChecks.cs"/>
+    <EmbeddedResource Include="$(InstallerCacheDir)\$(InstallerPayloadZip)" LogicalName="payload.zip"/>
+    <EmbeddedResource Include="dependencies.json" LogicalName="dependencies.json"/>
+    <EmbeddedResource Include="$(InstallerCacheDir)\launcher\LiveClipper.exe" LogicalName="launcher.exe"/>
+  </ItemGroup>
+</Project>

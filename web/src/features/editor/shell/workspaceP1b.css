@@ -1,0 +1,1368 @@
+/*
+ * 编辑器 P1b —— 工作区内部布局迁移到原型（design/ui/editor-shell-prototype.html）。
+ *
+ * 只加样式、不改既有交互：旧 app.css 的深色编辑器令牌保留给画布
+ * （时间线 / 监视器画面 / 属性与效果控件的深色表面），
+ * 外壳与工作区 chrome 改用 design/tokens.css 的浅/深主题令牌。
+ *
+ * 覆盖优先级：.editor-shell 前缀 + 本文件在 EditorShellFrame.tsx 最后导入，
+ * 因此同优先级的旧 app.css 规则会被这里的规则覆盖。
+ */
+
+/* ── 工作区底色与间距 ───────────────────────────────────────── */
+
+.editor-shell .editor-body {
+  background: var(--bg);
+  gap: var(--editor-window-gap);
+  padding: var(--lc-space-4) var(--editor-window-pad-right) var(--lc-space-5) var(--lc-space-5);
+}
+
+/* ── 左栏：单一侧栏 ─────────────────────────────────────────── */
+
+.editor-shell .project-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: var(--surface);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+.ed-side-nav {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--lc-space-5) 10px var(--lc-space-4);
+}
+
+.ed-side-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 26px;
+  padding: var(--lc-space-1) var(--lc-space-4);
+  color: var(--text-3);
+  font-size: var(--lc-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ed-side-add {
+  width: 20px;
+  height: 20px;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+}
+
+.ed-side-add:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ed-side-row {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  width: 100%;
+  min-width: 24px;
+  min-height: 24px;
+  height: 24px;
+  padding: 0 var(--lc-space-4);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ed-side-row:hover {
+  background: var(--surface-3);
+}
+
+.ed-side-row.is-active {
+  background: var(--surface-3);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.ed-side-row:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.ed-side-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dot-green);
+}
+
+.ed-side-row-icon {
+  flex: none;
+  color: var(--text-3);
+}
+
+.ed-side-row-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ed-side-row-meta {
+  flex: none;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.ed-side-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--lc-space-3);
+  border-top: var(--lc-border-width) solid var(--line);
+  overflow: hidden;
+}
+
+.ed-side-view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: var(--lc-space-4);
+  gap: var(--lc-space-4);
+}
+
+.ed-side-search {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  flex: none;
+  height: 30px;
+  padding: 0 9px;
+  border: var(--lc-border-width) solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+
+.ed-side-search:focus-within {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 22%, transparent);
+}
+
+.ed-side-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--lc-text-sm);
+}
+
+.ed-side-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+}
+
+.ed-side-toolbar button {
+  height: 24px;
+  padding: 0 var(--lc-space-4);
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-3);
+  font: inherit;
+  font-size: 10.5px;
+  cursor: pointer;
+}
+
+.ed-side-toolbar button:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.ed-side-toolbar button.is-active {
+  border-color: var(--line);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.ed-side-sort {
+  margin-left: auto;
+}
+
+.ed-side-hint {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  flex-wrap: wrap;
+  padding: var(--lc-space-3) var(--lc-space-1) 0;
+  color: var(--text-3);
+  font-size: 10.5px;
+}
+
+.ed-side-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--focus);
+  font: inherit;
+  font-size: 10.5px;
+  cursor: pointer;
+}
+
+.ed-side-link:hover {
+  text-decoration: underline;
+}
+
+.ed-side-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  height: 32px;
+  padding: 0 var(--lc-space-5);
+  border-top: var(--lc-border-width) solid var(--line);
+  color: var(--text-3);
+  font-size: var(--lc-text-2xs);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ed-side-foot-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 10.5px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+.ed-side-foot-btn:hover {
+  color: var(--text);
+}
+
+.ed-side-foot-end {
+  margin-left: auto;
+  color: var(--ink-green);
+}
+
+/* 旧项目树 / 搜索框 / 空态在浅色侧栏里的配色 */
+
+.ed-side .searchbar {
+  flex: none;
+  height: 30px;
+  margin: 0;
+  padding: 0 9px;
+  border: var(--lc-border-width) solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-size: var(--lc-text-sm);
+}
+
+.ed-side .searchbar input {
+  color: var(--text);
+}
+
+.ed-side .searchbar input::placeholder {
+  color: var(--text-3);
+}
+
+.ed-side .project-meta {
+  padding: 0 var(--lc-space-1);
+  color: var(--text-3);
+  font-size: 10.5px;
+}
+
+.ed-side .project-meta b {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.ed-side .project-tree {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--lc-space-1) 0;
+}
+
+.ed-side .tree-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 28px;
+  padding: 0 var(--lc-space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--lc-text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ed-side .tree-row.depth-1 {
+  padding-left: 20px;
+}
+
+.ed-side .tree-row:hover {
+  background: var(--surface-3);
+}
+
+.ed-side .tree-row.is-selected {
+  background: color-mix(in srgb, var(--focus) 12%, transparent);
+  color: var(--text);
+}
+
+.ed-side .tree-row:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.ed-side .tree-icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-1);
+  color: var(--text-3);
+}
+
+.ed-side .tree-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ed-side .tree-duration {
+  flex: none;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.ed-side .tree-folder {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.ed-side .tree-chevron {
+  transition: transform var(--motion-fast);
+}
+
+.ed-side .tree-chevron.is-collapsed {
+  transform: rotate(-90deg);
+}
+
+.ed-side .empty-state {
+  margin: var(--lc-space-3) var(--lc-space-1);
+  color: var(--text-3);
+  font-size: var(--lc-text-xs);
+}
+
+/* 素材网格（媒体卡片沿用旧类名，只换浅色表面） */
+
+.ed-side .media-grid {
+  display: grid;
+  gap: var(--lc-space-3);
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.ed-side .media-grid.is-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+
+.ed-side .media-grid.is-list {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+}
+
+.ed-side .media-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-2);
+  min-width: 0;
+  padding: var(--lc-space-2);
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 10.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ed-side .media-card:hover {
+  background: var(--surface-3);
+}
+
+.ed-side .media-card.is-selected {
+  border-color: var(--focus);
+  background: var(--surface-2);
+}
+
+.ed-side .media-card:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.ed-side .media-thumb {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
+}
+
+.ed-side .media-thumb > * {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ed-side .media-duration {
+  position: absolute;
+  right: var(--lc-space-2);
+  bottom: var(--lc-space-2);
+  padding: 1px var(--lc-space-2);
+  border-radius: var(--lc-radius-control);
+  background: rgba(10, 10, 12, 0.72);
+  color: #f1f1ee;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.ed-side .media-caption {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ed-side .media-caption span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 效果库（沿用旧 fx-* 类名） */
+
+.ed-side .fx-filters {
+  display: flex;
+  gap: 3px;
+  flex: none;
+  flex-wrap: wrap;
+}
+
+.ed-side .fx-filter {
+  height: 24px;
+  padding: 0 var(--lc-space-4);
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-3);
+  font: inherit;
+  font-size: 10.5px;
+  cursor: pointer;
+}
+
+.ed-side .fx-filter:hover {
+  color: var(--text);
+}
+
+.ed-side .fx-filter.is-active {
+  border-color: var(--line);
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.ed-side .fx-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-2);
+}
+
+.ed-side .fx-card {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  width: 100%;
+  padding: 7px var(--lc-space-4);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ed-side .fx-card:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-3);
+}
+
+.ed-side .fx-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ed-side .fx-card:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.ed-side .fx-icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+.ed-side .fx-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ed-side .fx-body b {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.ed-side .fx-body small {
+  color: var(--text-3);
+  font-size: var(--lc-text-2xs);
+}
+
+.ed-side .fx-add {
+  flex: none;
+  color: var(--text-3);
+}
+
+.ed-side .fx-target {
+  flex: none;
+  padding: 7px var(--lc-space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-size: var(--lc-text-2xs);
+  line-height: 1.5;
+}
+
+.ed-side .fx-target b {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+/* ── 监视器卡片 ─────────────────────────────────────────────── */
+
+.editor-shell .viewers {
+  gap: var(--lc-space-5);
+}
+
+.editor-shell .monitor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: var(--surface);
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.editor-shell .monitor > .panel-head {
+  flex: 0 0 30px;
+  height: 30px;
+  padding: 0 var(--lc-space-5);
+  gap: var(--lc-space-4);
+  background: none;
+  border-bottom: 0;
+}
+
+.editor-shell .monitor > .panel-head .panel-tab {
+  height: auto;
+  padding: 0;
+  border: 0;
+  color: var(--text-3);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+}
+
+.editor-shell .monitor > .panel-head .panel-tab.is-active {
+  background: none;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-shell .monitor-source-select {
+  height: 22px;
+  max-width: 34%;
+  padding: 0 var(--lc-space-3);
+  border: var(--lc-border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font: inherit;
+  font-size: 10.5px;
+}
+
+.editor-shell .monitor-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lc-space-3);
+  padding: 0 var(--lc-space-5) 10px;
+  background: none;
+}
+
+.editor-shell .monitor-body .screen {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  border: var(--lc-border-width) solid #050506;
+  border-radius: var(--radius-md);
+  background: #070708;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.editor-shell .monitor-scrubber-wrap {
+  flex: none;
+  margin: 0;
+}
+
+.editor-shell .monitor-scrubber {
+  width: 100%;
+  accent-color: var(--text);
+}
+
+.editor-shell .monitor-toolbar {
+  flex: none;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text-3);
+  font-size: 10.5px;
+}
+
+.editor-shell .monitor-toolbar .timecode {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.editor-shell .monitor-toolbar .timecode.is-muted {
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.editor-shell .monitor-toolbar .toolbar-separator {
+  width: 1px;
+  height: 12px;
+  background: var(--line-strong);
+}
+
+.editor-shell .monitor-toolbar .icon-button {
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+}
+
+.editor-shell .monitor-toolbar .icon-button:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.editor-shell .monitor-toolbar .icon-button:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--focus);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.editor-shell .monitor-toolbar .monitor-mode-button {
+  height: 22px;
+  padding: 0 7px;
+  border: var(--lc-border-width) solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font: inherit;
+  font-size: var(--lc-text-2xs);
+  cursor: pointer;
+}
+
+.editor-shell .monitor-toolbar .monitor-mode-button:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.editor-shell .monitor-toolbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-2);
+  color: var(--text-3);
+  font-size: var(--lc-text-2xs);
+}
+
+/* 监视器画布内的覆盖文字：保持深色画布上的浅字 */
+
+.editor-shell .monitor-tag,
+.editor-shell .monitor-slug,
+.editor-shell .monitor-time {
+  color: #e9e9e6;
+}
+
+.editor-shell .monitor-tag {
+  border-radius: var(--radius-sm);
+}
+
+/* ── 时间线外壳衔接：深色画布卡与浅色工作区的间隙 ───────────── */
+
+.editor-shell .lower-workspace {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* P1b 比例调整（Lead 2026-10-26）：给时间线多约 200px 垂直空间。
+ * 监视器区高度由 --lc-viewers-height 统一控制，编辑器网格行与
+ * .panel-splitter--viewers 都读它；原值 clamp(320px, 56vh, 540px)。
+ * 新值在 900–1000px 视口下约压 190–200px，时间线区随之增高。 */
+.editor-shell .editor-body {
+  --lc-viewers-height: clamp(240px, 34vh, 380px);
+}
+
+/* 窄屏：侧栏保持可读宽度，监视器卡片间隙收紧 */
+
+@media (max-width: 1400px) {
+  .editor-shell .editor-body {
+    padding: var(--lc-space-3) var(--editor-window-pad-right) 10px 10px;
+  }
+
+  .editor-shell .viewers {
+    gap: var(--lc-space-4);
+  }
+
+  .ed-side-row {
+    height: 28px;
+    font-size: var(--lc-text-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-side .tree-chevron {
+    transition: none;
+  }
+}
+
+/* ── 右侧：属性 / 片段信息抽屉（深色画布表面） ───────────────
+ * 编辑器画布固定深色：抽屉沿用 --canvas-* 令牌，与浅色外壳形成对比，
+ * 与原型 playwright 的右侧属性栏一致（原型 294px / 头部 38px / 属性组）。
+ */
+
+.editor-shell .inspector-drawer {
+  --lc-ai-drawer-width: 300px;
+  background: var(--canvas-panel);
+  border-left: var(--lc-border-width) solid var(--canvas-line);
+  color: var(--canvas-text);
+  font-family: var(--font-sans);
+}
+
+@media (max-width: 1500px) {
+  .editor-shell .inspector-drawer {
+    --lc-ai-drawer-width: 276px;
+  }
+}
+
+.editor-shell .inspector-drawer .ai-drawer-head {
+  height: 38px;
+  padding: 0 var(--lc-space-4) 0 var(--lc-space-5);
+  background: var(--canvas-panel-head);
+  border-bottom: var(--lc-border-width) solid var(--canvas-line);
+}
+
+.editor-shell .inspector-drawer .ai-drawer-title strong {
+  color: var(--canvas-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.editor-shell .inspector-drawer .ai-brand-dot {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: var(--canvas-accent);
+  background: rgba(126, 194, 255, 0.12);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px rgba(126, 194, 255, 0.18);
+}
+
+.editor-shell .inspector-drawer .ai-version {
+  color: var(--canvas-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+}
+
+.editor-shell .inspector-drawer .ai-drawer-head-actions kbd {
+  min-width: 26px;
+  height: 18px;
+  padding: 0 5px;
+  color: var(--canvas-text-muted);
+  background: var(--canvas-inset);
+  border: var(--lc-border-width) solid var(--canvas-line-strong);
+  border-radius: 5px;
+  font: 500 9.5px/16px var(--font-mono);
+}
+
+.editor-shell .inspector-drawer .ai-drawer-head-actions .icon-button {
+  width: 22px;
+  height: 22px;
+  color: var(--canvas-text-muted);
+  border-radius: var(--radius-sm);
+}
+
+.editor-shell .inspector-drawer .ai-drawer-head-actions .icon-button:hover {
+  color: var(--canvas-text);
+  background: var(--canvas-hover-bg);
+}
+
+.editor-shell .inspector-body {
+  background: var(--canvas-panel);
+  padding: var(--lc-space-5) 14px 20px;
+  color: var(--canvas-text);
+}
+
+.editor-shell .inspector-drawer .inspector-empty {
+  color: var(--canvas-text-muted);
+  border: var(--lc-border-width) dashed var(--canvas-line-strong);
+  border-radius: var(--radius-md);
+}
+
+.editor-shell .inspector-drawer .inspector-empty strong {
+  color: var(--canvas-text);
+}
+
+.editor-shell .inspector-drawer .inspector-source {
+  gap: var(--lc-space-2);
+  padding: 10px 11px;
+  margin-bottom: var(--lc-space-2);
+  background: var(--canvas-panel-head);
+  border: var(--lc-border-width) solid var(--canvas-line);
+  border-radius: var(--radius-md);
+}
+
+.editor-shell .inspector-drawer .inspector-eyebrow {
+  color: var(--canvas-text-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.09em;
+}
+
+.editor-shell .inspector-drawer .inspector-source strong {
+  color: var(--canvas-text);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.editor-shell .inspector-drawer .inspector-source > span:last-child {
+  color: var(--canvas-text-muted);
+  font-size: 10.5px;
+}
+
+.editor-shell .inspector-drawer .inspector-section {
+  padding: 13px 1px;
+  border-top: var(--lc-border-width) solid var(--canvas-line);
+  border-bottom: none;
+}
+
+.editor-shell .inspector-drawer .inspector-section h3 {
+  margin: 0 0 9px;
+  color: var(--canvas-text-muted);
+  font-size: var(--lc-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.editor-shell .inspector-drawer .inspector-section-head {
+  margin-bottom: 9px;
+}
+
+.editor-shell .inspector-drawer .inspector-section-head h3 {
+  margin: 0;
+}
+
+.editor-shell .inspector-drawer .inspector-section-head output {
+  color: var(--canvas-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+}
+
+.editor-shell .inspector-drawer .inspector-kv {
+  gap: 7px;
+  margin-bottom: 11px;
+}
+
+.editor-shell .inspector-drawer .inspector-kv dt {
+  color: var(--canvas-text-muted);
+  font-size: var(--lc-text-xs);
+}
+
+.editor-shell .inspector-drawer .inspector-kv dd {
+  color: var(--canvas-text);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-xs);
+}
+
+.editor-shell .inspector-drawer .inspector-locate,
+.editor-shell .inspector-drawer .secondary-button {
+  min-height: 28px;
+  color: var(--canvas-text);
+  background: var(--canvas-button);
+  border: var(--lc-border-width) solid var(--canvas-line-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  font-size: 11.5px;
+}
+
+.editor-shell .inspector-drawer .inspector-locate:hover,
+.editor-shell .inspector-drawer .secondary-button:hover {
+  background: var(--canvas-button-hover);
+  border-color: var(--canvas-button-hover-line);
+}
+
+.editor-shell .inspector-drawer .secondary-button.is-warning {
+  color: var(--canvas-warning);
+  border-color: rgba(242, 184, 92, 0.42);
+}
+
+.editor-shell .inspector-drawer .inspector-range-grid label {
+  color: var(--canvas-text-muted);
+  font-size: var(--lc-text-2xs);
+}
+
+.editor-shell .inspector-drawer .inspector-range-grid input,
+.editor-shell .inspector-drawer input[type='number'] {
+  min-height: 28px;
+  padding: 0 7px;
+  color: var(--canvas-text);
+  background: var(--canvas-input);
+  border: var(--lc-border-width) solid var(--canvas-line-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-xs);
+}
+
+.editor-shell .inspector-drawer .inspector-range-grid input:focus-visible,
+.editor-shell .inspector-drawer input[type='number']:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--canvas-accent);
+  outline-offset: var(--lc-focus-offset);
+}
+
+.editor-shell .inspector-drawer .inspector-footnote {
+  color: var(--canvas-text-muted);
+  font-size: var(--lc-text-2xs);
+  line-height: 1.55;
+}
+
+.editor-shell .inspector-drawer .inspector-chip {
+  color: var(--canvas-text-muted);
+  background: var(--canvas-button);
+  border-color: var(--canvas-line-strong);
+}
+
+.editor-shell .inspector-drawer .inspector-chip.is-active {
+  color: var(--canvas-text);
+  background: rgba(126, 194, 255, 0.16);
+  border-color: rgba(126, 194, 255, 0.4);
+}
+
+/* ── 浮动工作窗口（效果控件/信息等）：画布深色卡片 ─────────── */
+
+.editor-shell .workspace-window {
+  background: var(--canvas-panel);
+  color: var(--canvas-text);
+  border: var(--lc-border-width) solid var(--canvas-line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+  font-family: var(--font-sans);
+}
+
+.editor-shell .workspace-window-head {
+  height: 38px;
+  padding: 0 var(--lc-space-4) 0 var(--lc-space-5);
+  background: var(--canvas-panel-head);
+  border-bottom: var(--lc-border-width) solid var(--canvas-line);
+  border-radius: 9px 9px 0 0;
+}
+
+.editor-shell .workspace-window-head h2 {
+  color: var(--canvas-text);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.editor-shell .workspace-window-kicker {
+  color: var(--canvas-text-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.09em;
+}
+
+.editor-shell .workspace-window-close {
+  color: var(--canvas-text-muted);
+  border-radius: var(--radius-sm);
+}
+
+.editor-shell .workspace-window-close:hover {
+  color: var(--canvas-text);
+  background: var(--canvas-hover-bg);
+}
+
+.editor-shell .workspace-window-body {
+  background: var(--canvas-panel);
+  color: var(--canvas-text);
+}
+
+.editor-shell .workspace-window-title-row {
+  color: var(--canvas-text);
+}
+
+.editor-shell .workspace-window-badge {
+  color: var(--canvas-text-muted);
+  background: var(--canvas-inset);
+  border: var(--lc-border-width) solid var(--canvas-line-strong);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .workspace-window,
+  .editor-shell .inspector-drawer {
+    transition: none;
+  }
+}
+
+/* ---------- P1c ③：1280 下属性抽屉回到停靠位（≤1240 才 overlay） ---------- */
+
+/* app.css 在 ≤1280 就把 .ai-drawer 改成 fixed overlay，导致 1280 的节目监视器被盖住一半。
+   这里在 1241–1280 把属性抽屉拉回网格停靠位，并收窄到 260px；≤1240 仍用 overlay。 */
+@media (min-width: 1241px) and (max-width: 1280px) {
+  .editor-shell .inspector-drawer {
+    --lc-ai-drawer-width: 260px;
+    position: static;
+    width: var(--lc-ai-drawer-width);
+    min-width: var(--lc-ai-drawer-width);
+    box-shadow: none;
+    z-index: auto;
+  }
+
+  .editor-shell .inspector-drawer > * {
+    width: var(--lc-ai-drawer-width);
+  }
+}
+
+/* ≤1240：属性抽屉改为停靠的 236px 列,不再以 overlay 压住节目监视器右缘。 */
+@media (max-width: 1240px) {
+  .editor-shell.inspector-open .editor-body {
+    grid-template-columns:
+      min(var(--lc-project-width), 260px) minmax(0, 1fr)
+      236px var(--lc-ai-rail-width);
+  }
+
+  .editor-shell .inspector-drawer {
+    --lc-ai-drawer-width: 236px;
+    position: static;
+    width: var(--lc-ai-drawer-width);
+    min-width: var(--lc-ai-drawer-width);
+    box-shadow: none;
+    z-index: auto;
+  }
+
+  .editor-shell .inspector-drawer > * {
+    width: var(--lc-ai-drawer-width);
+  }
+}
+
+/* 更窄（≤1100）：进一步压缩项目栏与抽屉，避免出现整页横向溢出。 */
+@media (max-width: 1100px) {
+  .editor-shell.inspector-open .editor-body {
+    grid-template-columns:
+      min(var(--lc-project-width), 220px) minmax(0, 1fr)
+      220px var(--lc-ai-rail-width);
+  }
+
+  .editor-shell .inspector-drawer {
+    --lc-ai-drawer-width: 220px;
+  }
+}
+
+/* ==========================================================================
+   P1d：属性面板 / 效果控件的参数分组与可折叠小节；右键菜单深色收口
+   ========================================================================== */
+
+.editor-shell .workspace-window-body {
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+/* 可折叠分组：summary 替代旧 header，默认展开，折叠态由组件持久化。 */
+.editor-shell .wsx-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: var(--lc-space-5);
+  border-bottom: var(--lc-border-width) solid var(--canvas-divider);
+}
+
+.editor-shell .wsx-section:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.editor-shell .wsx-section__head {
+  display: flex;
+  align-items: center;
+  gap: var(--lc-space-4);
+  min-height: 22px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--canvas-text);
+  user-select: none;
+}
+
+.editor-shell .wsx-section__head::-webkit-details-marker {
+  display: none;
+}
+
+.editor-shell .wsx-section__title {
+  font-size: var(--lc-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--canvas-text);
+}
+
+.editor-shell .wsx-section__hint {
+  margin-left: auto;
+  color: var(--canvas-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--lc-text-2xs);
+}
+
+.editor-shell .wsx-section__chevron {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  font-size: 9px;
+  color: var(--canvas-text-muted);
+  transition: transform 120ms ease;
+}
+
+.editor-shell .wsx-section:not([open]) .wsx-section__chevron {
+  transform: rotate(-90deg);
+}
+
+.editor-shell .wsx-section__head:hover .wsx-section__title {
+  color: var(--canvas-accent-strong);
+}
+
+.editor-shell .wsx-section__head:focus-visible {
+  outline: var(--lc-focus-ring-width) solid var(--canvas-accent);
+  outline-offset: var(--lc-focus-offset-wide);
+  border-radius: var(--lc-radius-control-lg);
+}
+
+.editor-shell .wsx-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: var(--lc-space-1);
+}
+
+/* 参数行 / 滑杆：与设计系统一致的标签宽度与数值等宽字体。 */
+.editor-shell .window-slider {
+  grid-template-columns: 96px minmax(0, 1fr) 56px;
+  gap: 10px;
+  color: var(--canvas-text-muted);
+  font-size: var(--lc-text-xs);
+}
+
+.editor-shell .window-slider input[type='range'] {
+  height: 16px;
+  accent-color: #6b82ff;
+}
+
+.editor-shell .window-slider b {
+  color: var(--canvas-text);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  text-align: right;
+}
+
+.editor-shell .window-field {
+  color: var(--canvas-text-muted);
+  font-size: var(--lc-text-xs);
+}
+
+.editor-shell .window-field strong {
+  color: var(--canvas-text);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+/* 右键菜单：与时间线同属深色画布，统一用 --tl-* 令牌。 */
+.editor-shell .timeline-context-menu {
+  min-width: 208px;
+  padding: 5px;
+  color: var(--tl-text);
+  background: var(--tl-surface-2);
+  border: var(--lc-border-width) solid var(--tl-line-strong);
+  border-radius: var(--lc-radius-lg);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  font-family: var(--font-sans);
+}
+
+.editor-shell .timeline-context-title {
+  padding: var(--lc-space-3) 10px var(--lc-space-2);
+  color: var(--tl-text-2);
+  font-size: var(--lc-text-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.editor-shell .timeline-context-heading {
+  padding: 7px 10px 3px;
+  color: var(--tl-text-3);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.editor-shell .timeline-context-separator {
+  margin: var(--lc-space-2) var(--lc-space-3);
+  border-top: var(--lc-border-width) solid var(--tl-line);
+}
+
+.editor-shell .timeline-context-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  color: var(--tl-text);
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-shell .timeline-context-menu button:hover,
+.editor-shell .timeline-context-menu button:focus-visible {
+  color: var(--canvas-accent-strong);
+  background: var(--tl-surface-3);
+  outline: none;
+}
+
+.editor-shell .timeline-context-menu button:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--tl-accent);
+}
+
+.editor-shell .timeline-context-menu button.is-danger {
+  color: var(--tl-danger);
+}
+
+.editor-shell .timeline-context-menu button.is-danger:hover,
+.editor-shell .timeline-context-menu button.is-danger:focus-visible {
+  background: rgba(255, 107, 111, 0.14);
+}
+
+.editor-shell .timeline-context-menu button .menu-check {
+  color: var(--tl-accent-strong);
+  font-size: var(--lc-text-xs);
+}
+
+.editor-shell .timeline-context-menu button .menu-kbd,
+.editor-shell .timeline-context-menu button kbd {
+  margin-left: auto;
+  color: var(--tl-text-3);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-shell .wsx-section__chevron {
+    transition: none;
+  }
+}

@@ -1,0 +1,155 @@
+.lc-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: var(--lc-border-width) solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-weight: 550;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    opacity var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+}
+
+/* 键盘焦点：2px 实色环 + offset（不用 12% 透明光环，对比度见 A11Y.md） */
+.lc-btn:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: var(--ring-offset);
+  border-color: var(--ring-color);
+}
+
+/* 按下压感 */
+.lc-btn:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.lc-btn:disabled,
+.lc-btn--loading {
+  cursor: not-allowed;
+  opacity: var(--disabled-opacity);
+}
+
+/* 尺寸 */
+.lc-btn--sm {
+  height: 34px;
+  padding: 0 var(--space-3);
+  font-size: 12.5px;
+}
+
+.lc-btn--md {
+  height: 38px;
+  padding: 0 var(--space-4);
+  font-size: var(--fs-body);
+}
+
+.lc-btn--lg {
+  height: 40px;
+  padding: 0 var(--space-5);
+  font-size: var(--fs-body);
+}
+
+.lc-btn--block {
+  width: 100%;
+}
+
+/* 变体 */
+.lc-btn--solid {
+  background: var(--btn);
+  border-color: var(--btn);
+  color: var(--btn-text);
+}
+
+.lc-btn--solid:hover:not(:disabled) {
+  background: var(--btn-hover);
+  border-color: var(--btn-hover);
+}
+
+.lc-btn--outline {
+  background: transparent;
+  border-color: var(--control-border);
+  color: var(--text-2);
+}
+
+.lc-btn--outline:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.lc-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-2);
+}
+
+.lc-btn--ghost:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.lc-btn--link {
+  height: auto;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-2);
+}
+
+.lc-btn--link:hover:not(:disabled) {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* 内容 */
+.lc-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.lc-btn__icon > svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lc-btn__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lc-btn__spinner {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-top-color: currentColor;
+  border-radius: var(--radius-pill);
+  animation: lc-btn-spin 700ms linear infinite;
+}
+
+@keyframes lc-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-btn {
+    transition: none;
+  }
+
+  .lc-btn:not(:disabled):active {
+    transform: none;
+  }
+}

@@ -1,0 +1,67 @@
+.editor-next-ai {
+  --ai-bg: var(--editor-next-bg);
+  --ai-fg: var(--editor-next-fg);
+  --ai-accent: var(--lc-accent-line);
+  --ai-warning: var(--editor-next-loading);
+  --ai-error: var(--editor-next-error);
+  color-scheme: dark;
+  color: var(--ai-fg);
+  background: var(--ai-bg);
+  border-top: 1px solid var(--lc-line);
+  margin-top: 12px;
+  padding-top: 12px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.editor-next-ai .editor-next-ai-heading { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; }
+.editor-next-ai h2 { margin: 0; font: inherit; font-weight: 700; }
+.editor-next-ai p { margin: 0; max-width: 78ch; }
+.editor-next-ai .editor-next-ai-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.editor-next-ai button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--lc-text-muted);
+  border-radius: 4px;
+  font: inherit;
+  color: var(--ai-fg);
+  background: var(--lc-control-surface-neutral);
+  cursor: pointer;
+}
+.editor-next-ai button:hover:not(:disabled) { text-decoration: underline; }
+.editor-next-ai button:disabled { cursor: not-allowed; color: var(--ai-warning); border-style: dashed; }
+.editor-next-ai button.editor-next-ai-apply:not(:disabled) { color: var(--ai-bg); background: var(--ai-accent); }
+.editor-next-ai button:focus-visible,
+.editor-next-ai summary:focus-visible,
+.editor-next-ai .editor-next-ai-progress [role="status"]:focus-visible {
+  outline: var(--ring-width, 2px) solid var(--ai-fg);
+  outline-offset: var(--lc-focus-ring-offset);
+}
+.editor-next-ai[data-ai-state="stale"] #editor-next-ai-status,
+.editor-next-ai[data-ai-state="error"] #editor-next-ai-status { color: var(--ai-error); }
+.editor-next-ai[data-ai-state="ready"] #editor-next-ai-status,
+.editor-next-ai[data-ai-state="applied"] #editor-next-ai-status { color: var(--ai-accent); }
+.editor-next-ai[data-ai-state="generating"] #editor-next-ai-status,
+.editor-next-ai[data-ai-state="flushing"] #editor-next-ai-status,
+.editor-next-ai[data-ai-state="applying"] #editor-next-ai-status { color: var(--ai-warning); }
+.editor-next-ai .editor-next-ai-review { display: grid; gap: 8px; min-width: 0; }
+.editor-next-ai summary { min-height: 44px; padding: 8px 0; cursor: pointer; }
+.editor-next-ai ul { margin: 0; padding-inline-start: 24px; }
+.editor-next-ai li + li { margin-top: 8px; }
+.editor-next-ai .editor-next-ai-progress {
+  max-width: min(34rem, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--ai-fg);
+  border-radius: 4px;
+  color: var(--ai-fg);
+  background: var(--ai-bg);
+  font: inherit;
+}
+.editor-next-ai .editor-next-ai-progress::backdrop { background: var(--ai-bg); }

@@ -1,0 +1,205 @@
+/*
+ * 音乐工作室（/music）接入 AppShell 后的主题适配。
+ *
+ * features/music/music.css 全部使用深色 --lc-* 令牌；这里在 .lc-music-page 作用域内
+ * 重映射到 design/tokens.css 的 --* 令牌，使三栏面板跟随浅/深主题。
+ * 波形包络与音频播放器属于画布区域，保持深色观感。
+ */
+
+.lc-music-page {
+  /* ── 旧深色令牌 → 新设计令牌 ─────────────────────────────── */
+  --lc-bg-root: var(--bg);
+  --lc-chrome: var(--surface);
+  --lc-surface: var(--surface);
+  --lc-surface-sunken: var(--surface-2);
+  --lc-surface-raised: var(--surface-2);
+  --lc-surface-panel-head: var(--surface-3);
+  --lc-surface-input: var(--surface-3);
+  --lc-surface-selected: color-mix(in srgb, var(--ink-blue) 12%, transparent);
+  --lc-surface-hover: var(--surface-3);
+  --lc-line-strong: var(--line-strong);
+  --lc-line: var(--line);
+  --lc-line-soft: var(--line);
+  --lc-line-inset: var(--line);
+  --lc-text-primary: var(--text);
+  --lc-text-strong: var(--text);
+  --lc-text-secondary: var(--text-2);
+  --lc-text-muted: var(--text-2);
+  --lc-text-faint: var(--text-3);
+  --lc-text-inverse: var(--surface);
+  --lc-accent: var(--ink-blue);
+  --lc-accent-hover: var(--focus);
+  --lc-accent-pressed: var(--focus);
+  --lc-accent-soft: color-mix(in srgb, var(--ink-blue) 12%, transparent);
+  --lc-accent-line: color-mix(in srgb, var(--ink-blue) 45%, transparent);
+  --lc-focus-ring: var(--focus);
+  --lc-selection-border: var(--control-border);
+  --lc-live: var(--ink-amber);
+  --lc-success: var(--ink-green);
+  --lc-success-text: var(--ink-green);
+  --lc-success-surface: color-mix(in srgb, var(--dot-green) 14%, transparent);
+  --lc-warning: var(--ink-amber);
+  --lc-warning-surface: color-mix(in srgb, var(--dot-amber) 16%, transparent);
+  --lc-danger: var(--ink-red);
+  --lc-danger-surface: color-mix(in srgb, var(--dot-red) 12%, transparent);
+  --lc-font-ui: var(--font-sans);
+  --lc-font-mono: var(--font-mono);
+  --lc-text-2xs: 10px;
+  --lc-text-xs: 11px;
+  --lc-text-sm: 12px;
+  --lc-text-md: 13px;
+  --lc-text-lg: 14px;
+  --lc-text-title: 22px;
+  --lc-weight-regular: 400;
+  --lc-weight-medium: 500;
+  --lc-weight-semibold: 600;
+  --lc-weight-bold: 700;
+  --lc-leading-tight: 1.2;
+  --lc-space-1: 2px;
+  --lc-space-2: 4px;
+  --lc-space-3: 6px;
+  --lc-space-4: 8px;
+  --lc-space-5: 12px;
+  --lc-space-6: 16px;
+  --lc-space-7: 24px;
+  --lc-space-8: 32px;
+  --lc-radius-sm: var(--radius-sm);
+  --lc-radius-md: var(--radius-md);
+  --lc-radius-round: var(--radius-pill);
+  --lc-border-width: 1px;
+  --lc-motion-fast: var(--motion-fast);
+  --lc-motion-panel: var(--motion-theme);
+  --lc-z-toast: 90;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+}
+
+.lc-music-page .music-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--lc-space-fc-14) var(--lc-space-6) var(--lc-space-7);
+  background: transparent;
+}
+
+.lc-music-page .music-layout {
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+.lc-music-page .music-toast {
+  box-shadow: var(--shadow-float);
+}
+
+/* ── 画布区域：包络波形 / 音频播放器保持深色观感 ───────────── */
+
+.lc-music-page [data-surface='canvas'],
+.lc-music-page .music-audio-player {
+  color-scheme: dark;
+}
+
+.lc-music-page [data-surface='canvas'] {
+  --lc-bg-root: #0b0b0c;
+  --lc-surface: #151516;
+  --lc-surface-sunken: #1a1a1c;
+  --lc-surface-raised: #1a1a1c;
+  --lc-surface-input: #232324;
+  --lc-surface-hover: #232324;
+  --lc-line: #242426;
+  --lc-line-soft: #242426;
+  --lc-line-strong: #36363a;
+  --lc-text-primary: #f1f1ee;
+  --lc-text-strong: #f1f1ee;
+  --lc-text-secondary: #a5a5a0;
+  --lc-text-muted: #a5a5a0;
+  --lc-text-faint: #8f8f89;
+}
+
+.lc-music-page .music-envelope {
+  background: #151516;
+  border-color: #242426;
+}
+
+.lc-music-page .music-envelope-voice {
+  fill: rgba(61, 91, 255, 0.22);
+}
+
+.lc-music-page .music-envelope-target {
+  stroke: var(--lc-track-marker);
+}
+
+.lc-music-page .music-envelope-line {
+  stroke: #5ba361;
+}
+
+.lc-music-page .music-envelope-axis {
+  color: #8f8f89;
+}
+
+.lc-music-page .music-audio-player {
+  background: #151516;
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 1440px) {
+  .lc-music-page .music-layout {
+    grid-template-columns: minmax(250px, 0.9fr) minmax(320px, 1.15fr) minmax(250px, 0.9fr);
+  }
+}
+
+/* 侧栏占用之后，1280 宽只剩约 950px：退成两列，工程配乐独占一行。 */
+@media (max-width: 1360px) {
+  .lc-music-page .music-layout {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr);
+  }
+
+  .lc-music-page .music-layout > :nth-child(3) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── a11y 修复（task-45）：/music 对比度 ────────────────────── */
+
+/* 顶栏状态徽标在 AppShell 内、不在 .lc-music-page 下：只在本页生效。 */
+body:has(.lc-music-page) .lc-app-shell__status.is-ok {
+  color: color-mix(in srgb, var(--ink-green) 80%, var(--text));
+}
+
+/* 绿徽标：8% 绿底上 ink-green 4.03 → 加深前景 4.96。 */
+.lc-music-page .lc-badge--green {
+  color: color-mix(in srgb, var(--ink-green) 85%, var(--text));
+}
+
+/* BPM 徽标：旧 accent-line(45% 透明) 1.93 / 2.47 → 主题 ink-blue 4.86 / 7.15。 */
+.lc-music-page .music-badge--bpm {
+  color: var(--ink-blue);
+}
+
+/* 选中模型行（12% 蓝底）：描述与名称徽标 text-3 4.35/4.37 → text-2 5.46。 */
+.lc-music-page .music-model.is-selected .music-model-desc,
+.lc-music-page .music-model.is-selected .music-model-name .music-badge {
+  color: var(--text-2);
+}
+
+/* 选中行许可证：ink-amber 4.37 → 加深到 5.67。 */
+.lc-music-page .music-model.is-selected .music-model-license {
+  color: color-mix(in srgb, var(--ink-amber) 80%, var(--text));
+}
+
+/* 顶栏徽标在 AppShell actions 槽内、不在 .lc-music-page 下 → body:has 作用域。 */
+body:has(.lc-music-page) .lc-badge--green {
+  color: color-mix(in srgb, var(--ink-green) 85%, var(--text));
+}
+
+/* 警告徽标（本轮补）：ink-amber 对 14% 暖底 4.45 → 加深 5.4+。 */
+.lc-music-page .music-badge--warn {
+  color: color-mix(in srgb, var(--ink-amber) 80%, var(--text));
+}

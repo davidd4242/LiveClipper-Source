@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/__pycache__/
+*.pyc
+web/dist/
+web/public/engine/
+filmcraft-preview/wwwroot/
+src/LiveClipper.App/wwwroot/lib/hls.min.js
+out/
+dist/
+.env
+.env.*
+*.pfx
+*.key
+*.log

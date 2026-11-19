@@ -1,0 +1,44 @@
+# Windows 1.3.1：NuGet 与运行时归属
+
+各行来自本次已验证的锁定 NuGet 包及其 nuspec。相同字节的随包许可文本共用一份副本。Microsoft 声明 MIT 的包，其标准 MIT 许可文本见运行时 LICENSE；SourceGear 声明 Apache-2.0 的 SQLitePCLRaw 包可参阅上级 uv-LICENSE-APACHE.txt 的 Apache-2.0 全文。
+
+- Microsoft.AspNetCore.App.Runtime.win-x64 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [LICENSE.txt](texts/D7A68596AB69B06F-LICENSE.txt) / [THIRD-PARTY-NOTICES.TXT](texts/307D014F65D84823-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.AspNetCore.Mvc.Testing 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/307D014F65D84823-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.AspNetCore.TestHost 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/307D014F65D84823-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Data.Sqlite 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | 
+- Microsoft.Data.Sqlite.Core 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | 
+- Microsoft.Extensions.Configuration 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Configuration.Abstractions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Configuration.Binder 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Configuration.CommandLine 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Configuration.EnvironmentVariables 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Configuration.FileExtensions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Configuration.Json 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Configuration.UserSecrets 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.DependencyInjection 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.DependencyInjection.Abstractions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.DependencyModel 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Diagnostics 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Diagnostics.Abstractions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.FileProviders.Abstractions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.FileProviders.Physical 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.FileSystemGlobbing 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Hosting 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Hosting.Abstractions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Logging 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Logging.Abstractions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Logging.Configuration 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Logging.Console 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Logging.Debug 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Logging.EventLog 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Logging.EventSource 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Options 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Options.ConfigurationExtensions 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Extensions.Primitives 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.NETCore.App.Runtime.win-x64 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [LICENSE.TXT](texts/D7A68596AB69B06F-LICENSE.txt) / [THIRD-PARTY-NOTICES.TXT](texts/6D15E10A101C6BFF-THIRD-PARTY-NOTICES.TXT)
+- Microsoft.Web.WebView2 1.0.3537.50 | 许可文件 LICENSE.txt | © Microsoft Corporation. All rights reserved. | [LICENSE.txt](texts/0AF8F1B807512AAE-LICENSE.txt) / [NOTICE.txt](texts/106423785C5B7EBA-NOTICE.txt)
+- Microsoft.WindowsDesktop.App.Runtime.win-x64 10.0.15 | MIT | © Microsoft Corporation. All rights reserved. | [LICENSE](texts/A89886665765362E-LICENSE)
+- SQLitePCLRaw.bundle_e_sqlite3 2.1.13 | Apache-2.0 | Copyright 2014-2024 SourceGear, LLC | 
+- SQLitePCLRaw.core 2.1.13 | Apache-2.0 | Copyright 2014-2024 SourceGear, LLC | 
+- SQLitePCLRaw.lib.e_sqlite3 2.1.13 | Apache-2.0 | Copyright 2014-2024 SourceGear, LLC | 
+- SQLitePCLRaw.provider.e_sqlite3 2.1.13 | Apache-2.0 | Copyright 2014-2024 SourceGear, LLC | 

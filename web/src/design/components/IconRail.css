@@ -1,0 +1,147 @@
+.lc-icon-rail {
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lc-space-3);
+  width: 64px;
+  padding: var(--lc-space-fc-18) 0 var(--lc-space-fc-14);
+  background: var(--surface);
+  border-right: var(--lc-border-width) solid var(--line);
+}
+
+.lc-icon-rail__brand {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+  background: transparent;
+  overflow: hidden;
+}
+
+.lc-icon-rail__brand-dot {
+  display: block;
+  width: 34px;
+  height: 34px;
+  background: url('/favicon.svg') center / contain no-repeat;
+}
+
+.lc-icon-rail__item {
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    opacity var(--motion-fast) ease;
+}
+
+.lc-icon-rail__item > .lc-icon-rail__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lc-icon-rail__item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.lc-icon-rail__item:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.lc-icon-rail__item.is-active,
+.lc-icon-rail__item.is-active:hover:not(:disabled) {
+  background: var(--surface-inverse);
+  color: var(--bg);
+}
+
+.lc-icon-rail__item:disabled {
+  cursor: not-allowed;
+  opacity: var(--disabled-opacity);
+}
+
+.lc-icon-rail__item:focus-visible {
+  outline: var(--ring-width) solid var(--ring-color);
+  outline-offset: var(--ring-offset);
+}
+
+/* hover / focus 时向右浮出的 tooltip（文本来自 aria-label 同源的 data-tooltip） */
+.lc-icon-rail__item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 10px);
+  z-index: 30;
+  padding: var(--lc-space-2) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-inverse);
+  color: var(--bg);
+  font-family: var(--font-sans);
+  font-size: var(--lc-text-fc-11-5);
+  font-weight: var(--lc-weight-medium);
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-2px, -50%);
+  transition:
+    opacity var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+}
+
+.lc-icon-rail__item:hover::after,
+.lc-icon-rail__item:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.lc-icon-rail__count {
+  position: absolute;
+  top: var(--lc-space-1);
+  right: var(--lc-space-1);
+  min-width: 15px;
+  height: 15px;
+  padding: 0 var(--lc-space-2);
+  border-radius: var(--radius-pill);
+  background: var(--dot-red);
+  color: var(--surface);
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+  font-weight: var(--lc-weight-bold);
+  line-height: 15px;
+  text-align: center;
+  box-shadow: 0 0 0 var(--ring-width) var(--surface);
+}
+
+.lc-icon-rail__spacer {
+  flex: 1;
+}
+
+.lc-icon-rail__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lc-space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-icon-rail__item,
+  .lc-icon-rail__item::after {
+    transition: none;
+  }
+}

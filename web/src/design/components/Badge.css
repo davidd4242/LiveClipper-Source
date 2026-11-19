@@ -1,0 +1,60 @@
+.lc-badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lc-space-3);
+  height: 24px;
+  padding: 0 9px;
+  border: var(--lc-border-width) solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  font-size: var(--lc-text-fc-11-5);
+  font-weight: 550;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.lc-badge__dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* 徽标文字用 --ink-*（与状态点分离）：浅色 8% tint 上 ≥4.5:1 */
+.lc-badge--green {
+  color: var(--ink-green);
+  border-color: color-mix(in srgb, var(--ink-green) 30%, transparent);
+  background: color-mix(in srgb, var(--ink-green) 8%, transparent);
+}
+
+.lc-badge--blue {
+  color: var(--ink-blue);
+  border-color: color-mix(in srgb, var(--ink-blue) 30%, transparent);
+  background: color-mix(in srgb, var(--ink-blue) 8%, transparent);
+}
+
+.lc-badge--purple {
+  color: var(--ink-purple);
+  border-color: color-mix(in srgb, var(--ink-purple) 30%, transparent);
+  background: color-mix(in srgb, var(--ink-purple) 8%, transparent);
+}
+
+.lc-badge--red {
+  color: var(--ink-red);
+  border-color: color-mix(in srgb, var(--ink-red) 30%, transparent);
+  background: color-mix(in srgb, var(--ink-red) 8%, transparent);
+}
+
+.lc-badge--amber {
+  color: var(--ink-amber);
+  border-color: color-mix(in srgb, var(--ink-amber) 30%, transparent);
+  background: color-mix(in srgb, var(--ink-amber) 8%, transparent);
+}
+
+.lc-badge--idle {
+  color: var(--text-3);
+}

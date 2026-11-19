@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.0.15" />
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Compile Include="..\..\src\LiveClipper.Desktop\CloseHandshake.cs" Link="DesktopSource\CloseHandshake.cs" />
+    <Compile Include="..\..\src\LiveClipper.Desktop\ProxyPumpStream.cs" Link="DesktopSource\ProxyPumpStream.cs" />
+    <Compile Include="..\..\src\LiveClipper.Desktop\LivePreviewRelay.cs" Link="DesktopSource\LivePreviewRelay.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\LiveClipper.App\LiveClipper.App.csproj" />
+    <ProjectReference Include="..\..\src\LiveClipper.Core\LiveClipper.Core.csproj" />
+    <ProjectReference Include="..\..\src\LiveClipper.Live\LiveClipper.Live.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TestData\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

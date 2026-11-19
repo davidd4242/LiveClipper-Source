@@ -1,0 +1,228 @@
+.settings-ollama-span {
+  grid-column: 1 / -1;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.ollama-management,
+.ollama-management-dialog {
+  --ollama-accent: #ff9a3c;
+  --ollama-surface: var(--surface-2, #1a1a1c);
+  --ollama-text: var(--text, #f1f1ee);
+  --ollama-muted: var(--text-2, #a5a5a0);
+  --ollama-line: var(--line, #242426);
+  --ollama-error: var(--ink-red, #ff6b6f);
+  color: var(--ollama-text);
+}
+
+.ollama-management .lc-card__head {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ollama-management .lc-card__heading {
+  min-width: 0;
+}
+
+.ollama-management .lc-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ollama-management__overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ollama-management__state {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--ollama-line);
+  border-radius: var(--radius-md, 10px);
+  background: var(--ollama-surface);
+}
+
+.ollama-management__state h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ollama-muted);
+}
+
+.ollama-management__state h3 svg {
+  flex-shrink: 0;
+}
+
+.ollama-management__state strong {
+  font-size: 16px;
+}
+
+.ollama-management p,
+.ollama-management-dialog p {
+  max-width: 78ch;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.ollama-management__state p,
+.ollama-management__install p,
+.ollama-management__note {
+  color: var(--ollama-muted);
+}
+
+.ollama-management__install {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ollama-management__install > div:first-child {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.ollama-management__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ollama-management .lc-btn,
+.ollama-management .dus__btn,
+.ollama-management-dialog .lc-btn,
+.ollama-management-dialog .lc-dialog__close {
+  min-height: 44px;
+}
+
+.ollama-management .lc-btn:focus-visible,
+.ollama-management .dus__btn:focus-visible,
+.ollama-management-dialog .lc-btn:focus-visible,
+.ollama-management-dialog .lc-dialog__close:focus-visible,
+.ollama-management__details summary:focus-visible {
+  outline: 2px solid var(--ollama-accent);
+  outline-offset: 3px;
+}
+
+.ollama-management-dialog .lc-btn--solid {
+  background: var(--ollama-accent);
+  border-color: var(--ollama-accent);
+  color: #151516;
+}
+
+.ollama-management-dialog .lc-btn--solid:not(:disabled):hover {
+  filter: brightness(1.08);
+}
+
+.ollama-management__task {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 16px;
+  border-left: 2px solid var(--ollama-accent);
+  background: var(--ollama-surface);
+}
+
+.ollama-management__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ollama-muted);
+}
+
+.ollama-management__progress progress {
+  width: 100%;
+  height: 8px;
+  accent-color: var(--ollama-accent);
+}
+
+.ollama-management__error {
+  color: var(--ollama-error);
+}
+
+.ollama-management dl,
+.ollama-management-dialog dl {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ollama-management dl > div,
+.ollama-management-dialog dl > div {
+  display: grid;
+  grid-template-columns: minmax(100px, 140px) minmax(0, 1fr);
+  gap: 8px 12px;
+}
+
+.ollama-management dt,
+.ollama-management-dialog dt {
+  color: var(--ollama-muted);
+}
+
+.ollama-management dd,
+.ollama-management-dialog dd {
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.ollama-management__details summary {
+  min-height: 44px;
+  padding-top: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ollama-muted);
+}
+
+.ollama-management__confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ollama-management-dialog .lc-dialog__foot {
+  flex-wrap: wrap;
+}
+
+@container (max-width: 620px) {
+  .ollama-management__overview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ollama-management dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .ollama-management-dialog dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}

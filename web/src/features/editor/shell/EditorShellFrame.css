@@ -1,0 +1,185 @@
+/*
+ * 编辑器外壳 P0 —— 根作用域与画布边界。
+ *
+ * 只在这里补外壳需要的少量覆盖（旧 app.css 不动）：
+ * - `.editor-shell` 深色守卫（与 design/tokens.css:162 的 a-impl 守卫叠加）；
+ * - 旧布局里以 --lc-menubar-height(34px) 定位的浮层，在新 48px 顶栏下重定位；
+ * - 画布深色变量：时间线/监视器内部后续（P1）可直接引用，当前不强制替换。
+ */
+
+.editor-shell {
+  --editor-window-gap: 10px;
+  --editor-window-pad-right: 12px;
+}
+
+.editor-shell[data-canvas-theme='dark'] {
+  color-scheme: dark;
+
+  /* 画布固定深色（不进入浅色主题）——P1 换时间线配色时按需引用。 */
+  --canvas-bg: #0d0d0e;
+  --canvas-panel: #141416;
+  --canvas-panel-head: #19191b;
+  --canvas-line: #242426;
+  --canvas-line-strong: #36363a;
+  --canvas-text: #e9e9e6;
+  --canvas-text-muted: #a5a5a0;
+  --canvas-accent: #7ec2ff;
+  --canvas-marker: #f2b85c;
+
+  /* 面板细节色（二级窗口/抽屉用；浅色主题在 editorLightTheme.css 里映射） */
+  --canvas-inset: #1d1d20;
+  --canvas-hover-bg: #242427;
+  --canvas-button: #1c1c1f;
+  --canvas-button-hover: #242428;
+  --canvas-button-hover-line: #49494e;
+  --canvas-warning: #ffd08a;
+  --canvas-input: #101012;
+  --canvas-divider: #26262a;
+  --canvas-accent-strong: #ffffff;
+}
+
+/* 旧浮层以 34px 菜单条为基准，新顶栏 48px、状态栏 28px。 */
+.editor-shell .editor-blocking {
+  inset: 48px 0 28px;
+}
+
+.editor-shell .toast {
+  --editor-toast-right: 48px;
+  right: var(--editor-toast-right);
+  bottom: 40px;
+  max-width: min(330px, calc(100vw - var(--editor-toast-right) - 16px));
+  overflow-wrap: anywhere;
+}
+
+.editor-shell.effect-docked .toast,
+.editor-shell.refinement-open .toast {
+  --editor-toast-right: calc(var(--editor-right-column-width) + var(--lc-ai-rail-width) + var(--editor-window-gap) + var(--editor-window-pad-right) + 12px);
+}
+
+@media (max-width: 1280px) {
+  /* app.css 里 .ai-drawer 在窄窗用 fixed + --lc-menubar-height 定位。 */
+  .editor-shell .ai-drawer {
+    top: 48px;
+    bottom: 28px;
+  }
+}
+
+/* 窄窗：效果控件停靠在右列，与精修面板占同一格，避免浮窗压住整行单列的监视器。 */
+.editor-shell.effect-docked {
+  --editor-right-column-width: 300px;
+}
+.editor-shell.effect-docked .editor-body {
+  grid-template-columns: var(--lc-project-width) minmax(0, 1fr) var(--editor-right-column-width) var(--lc-ai-rail-width);
+}
+.editor-shell .editor-effect-dock {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface, var(--lc-surface));
+  color: var(--text, var(--lc-text-primary));
+}
+.editor-shell .workspace-window--docked {
+  position: static;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.editor-shell .workspace-window--docked .workspace-window-head {
+  cursor: default;
+}
+@media (max-width: 1500px) {
+  .editor-shell.effect-docked {
+    --editor-right-column-width: 260px;
+  }
+  .editor-shell.effect-docked .editor-body {
+    grid-template-columns: min(var(--lc-project-width), 280px) minmax(0, 1fr) var(--editor-right-column-width) var(--lc-ai-rail-width);
+  }
+}
+@media (max-width: 1400px) {
+  .editor-shell {
+    --editor-window-gap: 8px;
+    --editor-window-pad-right: 10px;
+  }
+  .editor-shell.effect-docked {
+    --editor-right-column-width: 280px;
+  }
+  .editor-shell.effect-docked .editor-body {
+    grid-template-columns: min(var(--lc-project-width), 240px) minmax(0, 1fr) var(--editor-right-column-width) var(--lc-ai-rail-width);
+  }
+}
+
+/* The refinement dock occupies the existing right-hand grid column. */
+.editor-shell.refinement-open {
+  --editor-right-column-width: 300px;
+}
+.editor-shell.refinement-open .editor-body {
+  grid-template-columns: var(--lc-project-width) minmax(0, 1fr) var(--editor-right-column-width) var(--lc-ai-rail-width);
+}
+.editor-shell .editor-refinement-dock {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface, var(--lc-surface));
+  color: var(--text, var(--lc-text-primary));
+}
+.editor-shell .editor-refinement-dock > .refinement-panel {
+  width: 100%;
+  flex: 1 1 0;
+}
+.editor-refinement-dock > button,
+.editor-refinement-dock > p { margin: var(--space-2, 8px); }
+@media (max-width: 1500px) {
+  .editor-shell.refinement-open {
+    --editor-right-column-width: 260px;
+  }
+  .editor-shell.refinement-open .editor-body {
+    grid-template-columns: min(var(--lc-project-width), 280px) minmax(0, 1fr) var(--editor-right-column-width) var(--lc-ai-rail-width);
+  }
+}
+
+@media (max-width: 1400px) {
+  /* 与 app.css 的 1400 断点同一口径：dock 收窄，别把时间线挤出可用宽度。 */
+  .editor-shell.refinement-open {
+    --editor-right-column-width: 240px;
+  }
+  .editor-shell.refinement-open .editor-body {
+    grid-template-columns: min(var(--lc-project-width), 240px) minmax(0, 1fr) var(--editor-right-column-width) var(--lc-ai-rail-width);
+  }
+}
+
+/* 停靠态是栏内面板：压过 workspaceP1b 的浮窗外观与浅色主题的阴影。 */
+.editor-shell .editor-effect-dock .workspace-window--docked,
+.editor-shell .editor-refinement-dock .workspace-window--docked,
+:root[data-theme='light'] .editor-shell .editor-effect-dock .workspace-window--docked,
+:root[data-theme='light'] .editor-shell .editor-refinement-dock .workspace-window--docked {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+/* R51-FX2: keep disabled ink and boundaries opaque on the fixed-dark timeline. */
+.editor-shell[data-canvas-theme='dark'] .timeline-toolbar .pr-tool:disabled {
+  color: var(--lc-text-disabled);
+  background: var(--tl-surface-2);
+  border-color: var(--lc-text-disabled);
+  opacity: 1;
+}
+
+.editor-shell[data-canvas-theme='dark'] .timeline-more-menu button[aria-disabled='true'] {
+  color: var(--lc-text-disabled);
+  opacity: 1;
+}

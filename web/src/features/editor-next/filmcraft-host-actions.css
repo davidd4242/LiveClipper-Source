@@ -1,0 +1,213 @@
+/* filmcraft-host-actions.css
+ * editor-next 顶栏剪辑操作组（FilmCraftHostActions，portal 至原生 #topbar-right）。
+ * 色值为字面量，取自 filmcraft-preview/wwwroot/app.css :root 深色 token：
+ * icon #b0b0b0 / icon-active #d1d1d1 / button-hover #2a2a2a / pressed #4b4b4b /
+ * separator #303030 / text-faint #6e6e6e / focus #5794ec / scroll-thumb #4b4b4b。
+ * 业务按钮仅作用于 .fc-host-actions；左侧应用导航复用 IconRail，右侧保留原生工作区。 */
+
+.fc-host-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;                          /* 原生 #topbar-right 同款间距 */
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 4px;
+  padding: 3px 0 3px 6px;            /* 纵向留白容纳 focus 环；左为组分隔 */
+  border-left: 1px solid #303030;    /* --separator */
+  overflow-x: auto;                  /* 窄视口：容器自身横向滚动，不挤开原生布局 */
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #4b4b4b transparent;
+}
+.fc-host-actions::-webkit-scrollbar { height: 4px; }
+.fc-host-actions::-webkit-scrollbar-thumb { background: #4b4b4b; border-radius: 5px; }
+.fc-host-actions::-webkit-scrollbar-track { background: transparent; }
+
+.fc-host-action {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  height: 22px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 3px;                /* 原生 .icon-btn 同款 */
+  background: transparent;
+  color: #b0b0b0;                    /* --icon */
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+}
+.fc-host-action:hover:not(:disabled) {
+  background: #2a2a2a;               /* --button-hover */
+  color: #d1d1d1;                    /* --icon-active */
+}
+.fc-host-action:active:not(:disabled) {
+  background: #4b4b4b;               /* --pressed */
+  color: #d1d1d1;
+}
+.fc-host-action.is-active,
+.fc-host-action.is-active:hover:not(:disabled) {
+  background: #4b4b4b;               /* 原生 .icon-btn.active 同款 */
+  color: #d1d1d1;
+}
+.fc-host-action:disabled {
+  background: transparent;
+  color: #6e6e6e;                    /* --text-faint */
+  cursor: default;
+}
+.fc-host-action:focus-visible {
+  outline: 2px solid #5794ec;        /* --focus */
+  outline-offset: 1px;
+}
+
+/* 窄窗口顶栏（实测最小窗口约 884px；左 nav 64px 另占，#topbar 实际约 820px）。
+ * 根因：原生 #topbar 内 #mode-tabs / #menubar / #topbar-right 均为 flex:0 0 auto，仅 #topbar-title
+ * 可收缩（还带 24px 水平 padding）；三者 + 动作之和超宽时，最后的 #topbar-right 被推出 #app(overflow:hidden)，
+ * 导出入口随之不可达。此处只做：回收原生间距/内边距、标题清零 padding，并让动作组排在原生图标之前。
+ * 不隐藏任何按钮、不改字号/橙色；文字保留。选择器用双 id 以压过 mod-chrome.css / app.css。 */
+@media (max-width: 1100px) {
+  .fc-engine-root #topbar { padding-left: 8px; }
+  .fc-engine-root #topbar #mode-tabs { margin-right: 2px; }
+  .fc-engine-root #topbar .mode-tab { padding: 0 5px; }
+  .fc-engine-root #topbar #menubar .menu-item { padding: 3px 5px; }
+  .fc-engine-root #topbar #topbar-title { padding: 0; min-width: 0; }
+  .fc-engine-root #topbar #topbar-right { gap: 2px; flex: 0 0 auto; }
+  .fc-engine-root #topbar #topbar-right .icon-btn:not(.ch-textbtn) { width: 22px; height: 24px; }
+  /* 动作组置于原生图标之前：万一仍溢出，被挤出的是尾部原生图标，不是 导出/保存/提示 */
+  .fc-engine-root #topbar-right > .fc-host-actions { order: -1; flex: 0 0 auto; margin-left: 0; padding-left: 4px; overflow: visible; }
+  .fc-engine-root #topbar-right > .fc-host-actions .fc-host-action { padding: 0 6px; }
+}
+
+.fc-editor-layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fc-editor-layout > .editor-next-page {
+  flex: 1 1 0;
+  width: 0;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* 右侧内容槽：主画布 + 抽屉 + 右工具栏仍保持原来的横向兄弟关系，只有它参与滑入。 */
+.fc-editor-layout > .fc-editor-motion {
+  flex: 1 1 0;
+  width: 0;
+  height: 100%;
+}
+.fc-editor-motion > .lc-page-slide-motion__content { flex-direction: row; height: 100%; }
+.fc-editor-motion .editor-next-page {
+  flex: 1 1 0;
+  width: 0;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.fc-app-nav {
+  position: relative;
+  z-index: 260;
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 64px;
+  flex-direction: column;
+  width: 64px;
+  min-height: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: 12px/1.4 var(--font-sans);
+}
+
+.fc-app-nav > .lc-icon-rail {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.fc-app-nav .lc-icon-rail__brand,
+.fc-app-nav .lc-icon-rail__item { flex-shrink: 0; }
+.fc-app-nav .lc-icon-rail__item { text-decoration: none; }
+.fc-app-nav .lc-icon-rail__item[aria-disabled="true"] { cursor: progress; opacity: var(--disabled-opacity); }
+
+.fc-app-nav__hint,
+.fc-app-nav__error {
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 30%;
+  margin: 0;
+  padding: 8px 6px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  border-right: var(--lc-border-width) solid var(--line);
+}
+.fc-app-nav__hint { color: var(--text-3); }
+.fc-app-nav__hint[data-busy="false"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.fc-app-nav__error { color: var(--lc-danger-text, #d23f4f); }
+
+.editor-next-shell__body > .fc-editor-layout { height: 100%; }
+
+/* 无 clip 空选择态：可见提示，位于读屏专用 announcements 之外。 */
+.editor-next-page > .editor-next-empty-selection {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 0;
+  padding: 24px;
+  text-align: center;
+}
+/* 终态错误：可见，位于 announcements 之外；无 loaded 时占满工作区，已载入时仅为顶部横幅。 */
+.editor-next-page > .editor-next-terminal-error {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 0;
+  padding: 24px;
+  text-align: center;
+}
+.editor-next-page > .editor-next-terminal-error--loaded { flex: 0 0 auto; padding: 8px 16px; gap: 4px; }
+.editor-next-terminal-error__text { margin: 0; font-size: 16px; color: var(--lc-text-primary, #edf0f4); }
+.editor-next-terminal-error__hint { margin: 0; font-size: 13px; color: var(--lc-text-secondary, #c3cad4); }
+.editor-next-empty-selection__text { margin: 0; font-size: 16px; color: var(--lc-text-secondary, #c3cad4); }
+.editor-next-empty-selection__action {
+  min-height: 44px;
+  padding: 9px 20px;
+  border: 1px solid var(--lc-accent-line, #ff9a3c);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--lc-text-primary, #edf0f4);
+  font: inherit;
+  cursor: pointer;
+}
+.editor-next-empty-selection__action:hover { background: var(--lc-control-surface-neutral, #2a2a2a); }
+.editor-next-empty-selection__action:focus-visible { outline: 2px solid var(--lc-focus-ring, #5794ec); outline-offset: 2px; }
+
+@media (pointer: coarse) {
+  .fc-app-nav .lc-icon-rail__item { width: 44px; height: 44px; }
+}
